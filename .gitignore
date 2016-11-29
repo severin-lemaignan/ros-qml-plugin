@@ -1,0 +1,7 @@
+#Qt
+*.user
+build*/
+
+#YCM
+*.pyc
+
