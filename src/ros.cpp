@@ -1,17 +1,23 @@
 #include <iostream>
+#include <chrono>
 #include "ros.h"
 
 
 using namespace std;
 
-Ros::Ros(QQuickItem *parent):
+void RosNode::setName(QString name)
+{
+
+}
+
+TFBroadcaster::TFBroadcaster(QQuickItem *parent):
     _running(false),
     _target(nullptr)
 {
 
 }
 
-Ros::~Ros()
+TFBroadcaster::~TFBroadcaster()
 {
     if (_running) {
         _running=false;
@@ -20,34 +26,37 @@ Ros::~Ros()
 
 }
 
-void Ros::setTarget(QQuickItem* target)
+void TFBroadcaster::setTarget(QQuickItem* target)
 {
     //if(_target) disconnect(_target);
+
+    const QMetaObject* metaObject = target->metaObject();
+    for(int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i)
+        cout << QString::fromLatin1(metaObject->property(i).name()).toStdString() << endl;
 
    _target = target;
     //connect(_target,)
    if (!_running) {
-       cout << "Target set to: " << _target->property("id").toString().toStdString() << endl;
-       cout << "Target at: " << _target->x() << ", " << _target->y() << endl;
        _running = true;
 
-       _broadcaster_thread = std::thread(&Ros::tfPublisher, this);
+       _broadcaster_thread = std::thread(&TFBroadcaster::tfPublisher, this);
 
    }
 
 }
 
-void Ros::setFrame(QString frame)
+void TFBroadcaster::setParentFrame(QString frame)
 {
+
         _parentframe = frame;
         cout << "Parent frame set to: " << _parentframe.toStdString() << endl;
 }
 
-void Ros::tfPublisher()
+void TFBroadcaster::tfPublisher()
 {
     while(_running) {
-       cout << "Target at: " << _target->x() << ", " << _target->y() << endl;
-       sleep(1);
+       cout << "Target " << _target->property("id").toString().toStdString() << " at " << _target->x() << ", " << _target->y() << endl;
+       this_thread::sleep_for(chrono::milliseconds(500));
     }
 
 }
