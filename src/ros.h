@@ -12,7 +12,7 @@
  */
 class RosNode : public QQuickItem {
 Q_OBJECT
-    Q_PROPERTY(QString name WRITE setName MEMBER _name)
+    //Q_PROPERTY(QString pixelscale MEMBER _pixel2meter)
     //Q_PROPERTY(QString node READ setName MEMBER _name)
 
 public:
@@ -26,7 +26,7 @@ public:
 private:
 
     ros::NodeHandle _node;
-    QString _name;
+    qreal _pixel2meter;
 
 
 };
@@ -38,6 +38,8 @@ class TFBroadcaster : public QQuickItem {
 Q_OBJECT
     Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
     Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
+    Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
+    Q_PROPERTY(qreal pixelscale MEMBER _pixel2meter)
 
 public:
 
@@ -46,6 +48,7 @@ public:
     virtual ~TFBroadcaster();
 
     void setTarget(QQuickItem* target);
+    void setFrame(QString frame);
     void setParentFrame(QString frame);
 
 private:
@@ -53,13 +56,17 @@ private:
     void tfPublisher();
 
     bool _running;
+    bool _initialized;
     std::thread _broadcaster_thread;
 
     QQuickItem* _target;
+    QString _frame;
     QString _parentframe;
 
+    qreal _pixel2meter;
+
     ros::NodeHandle _node;
-    //tf::TransformBroadcaster _br;
+    tf::TransformBroadcaster _br;
 
 };
 

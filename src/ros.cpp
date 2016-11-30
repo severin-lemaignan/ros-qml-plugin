@@ -1,18 +1,17 @@
+#include <cmath>
 #include <iostream>
 #include <chrono>
 #include "ros.h"
 
-
 using namespace std;
 
-void RosNode::setName(QString name)
-{
-
-}
-
 TFBroadcaster::TFBroadcaster(QQuickItem *parent):
+    _initialized(false),
     _running(false),
-    _target(nullptr)
+    _target(nullptr),
+    _frame(""),
+    _parentframe(""),
+    _pixel2meter(1)
 {
 
 }
@@ -28,14 +27,9 @@ TFBroadcaster::~TFBroadcaster()
 
 void TFBroadcaster::setTarget(QQuickItem* target)
 {
-    //if(_target) disconnect(_target);
-
-    const QMetaObject* metaObject = target->metaObject();
-    for(int i = metaObject->propertyOffset(); i < metaObject->propertyCount(); ++i)
-        cout << QString::fromLatin1(metaObject->property(i).name()).toStdString() << endl;
 
    _target = target;
-    //connect(_target,)
+
    if (!_running) {
        _running = true;
 
@@ -45,18 +39,42 @@ void TFBroadcaster::setTarget(QQuickItem* target)
 
 }
 
+void TFBroadcaster::setFrame(QString frame)
+{
+
+        _frame = frame;
+        if (!_parentframe.isEmpty()) _initialized = true;
+
+        cout << "Frame set to: " << _frame.toStdString() << endl;
+}
+
+
 void TFBroadcaster::setParentFrame(QString frame)
 {
 
         _parentframe = frame;
+        if (!_frame.isEmpty()) _initialized = true;
+
         cout << "Parent frame set to: " << _parentframe.toStdString() << endl;
 }
 
 void TFBroadcaster::tfPublisher()
 {
     while(_running) {
-       cout << "Target " << _target->property("id").toString().toStdString() << " at " << _target->x() << ", " << _target->y() << endl;
-       this_thread::sleep_for(chrono::milliseconds(500));
+        if(_initialized) {
+            cout << "Publishing target " << _frame.toStdString() << " at " << _target->x() << ", " << _target->y() << endl;
+
+            tf::Transform transform;
+            transform.setOrigin( tf::Vector3(_target->x() * _pixel2meter,
+                                             _target->y() * _pixel2meter,
+                                             0.0) );
+
+            tf::Quaternion q;
+            q.setRPY(0, 0, _target->rotation()*M_PI/180);
+            transform.setRotation(q);
+            _br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), _parentframe.toStdString(), _frame.toStdString()));
+        }
+       this_thread::sleep_for(chrono::milliseconds(50));
     }
 
 }

@@ -5,7 +5,7 @@ TARGET = rosplugin
 
 CONFIG += qt plugin c++11 nostrip link_pkgconfig
 #CONFIG -= android_install
-PKGCONFIG += roscpp tf2
+PKGCONFIG += roscpp tf
 
 QT += qml quick
 
