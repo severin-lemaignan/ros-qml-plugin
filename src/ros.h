@@ -14,7 +14,8 @@
 class RosPositionController : public QQuickItem {
 Q_OBJECT
     Q_PROPERTY(bool position MEMBER _position NOTIFY onPositionChanged)
-    Q_PROPERTY(bool released MEMBER _released NOTIFY onReleasedChanged)
+    Q_PROPERTY(QQuickItem* origin MEMBER _origin)
+    Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
 
 public:
 
@@ -29,14 +30,15 @@ private slots:
 
 signals:
     void onPositionChanged();
-    void onReleased();
 
     void onMsgReceived(double x, double y);
 
 private:
 
+    QQuickItem* _origin;
+    double _pixel2meter;
+
     bool _position; // not really used, but required tfor 'onPositionChanged' to be valid in QML
-    bool _released; // not really used, but required tfor 'onReleased' to be valid in QML
 
     ros::NodeHandle _node;
     ros::Subscriber _incoming_poses;

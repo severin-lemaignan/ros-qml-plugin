@@ -6,6 +6,8 @@
 using namespace std;
 
 RosPositionController::RosPositionController(QQuickItem *parent):
+    _origin(nullptr),
+    _pixel2meter(1),
     _incoming_poses(_node.subscribe("/move_base_simple/goal", 1, &RosPositionController::onIncomingPose, this))
 {
 
@@ -16,16 +18,23 @@ RosPositionController::RosPositionController(QQuickItem *parent):
 
 void RosPositionController::onIncomingPose(const geometry_msgs::PoseStamped &pose)
 {
-    cout << "Updated target pose!" << endl;
     emit onMsgReceived(pose.pose.position.x, pose.pose.position.y);
-
 }
 
 void RosPositionController::updatePos(double x, double y)
 {
-    cout << "Youpi!" << endl;
-    setX(x);
-    setY(y);
+    double px,py;
+    if (_origin) {
+        px = x / _pixel2meter + _origin->x();
+        py = -y / _pixel2meter + _origin->y();
+    }
+    else {
+        px = x / _pixel2meter;
+        py = -y / _pixel2meter;
+    }
+
+    setX(px);
+    setY(py);
     emit onPositionChanged();
 
 }
