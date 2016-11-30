@@ -9,6 +9,7 @@ TFBroadcaster::TFBroadcaster(QQuickItem *parent):
     _initialized(false),
     _running(false),
     _target(nullptr),
+    _origin(nullptr),
     _frame(""),
     _parentframe(""),
     _pixel2meter(1)
@@ -62,19 +63,27 @@ void TFBroadcaster::tfPublisher()
 {
     while(_running) {
         if(_initialized) {
-            cout << "Publishing target " << _frame.toStdString() << " at " << _target->x() << ", " << _target->y() << endl;
+            double x,y, theta;
+            if (_origin) {
+                x = (_target->x() - _origin->x()) * _pixel2meter;
+                y = -(_target->y() - _origin->y()) * _pixel2meter;
+                theta = -(_target->rotation() - _origin->rotation()) * M_PI/180;
+            }
+            else {
+                x = _target->x() * _pixel2meter;
+                y = -_target->y() * _pixel2meter;
+                theta = -_target->rotation() * M_PI/180;
+            }
 
             tf::Transform transform;
-            transform.setOrigin( tf::Vector3(_target->x() * _pixel2meter,
-                                             _target->y() * _pixel2meter,
-                                             0.0) );
+            transform.setOrigin( tf::Vector3(x, y, 0.0) );
 
             tf::Quaternion q;
-            q.setRPY(0, 0, _target->rotation()*M_PI/180);
+            q.setRPY(0, 0, theta);
             transform.setRotation(q);
             _br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), _parentframe.toStdString(), _frame.toStdString()));
         }
-       this_thread::sleep_for(chrono::milliseconds(50));
+       this_thread::sleep_for(chrono::milliseconds(100));
     }
 
 }

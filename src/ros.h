@@ -37,9 +37,10 @@ private:
 class TFBroadcaster : public QQuickItem {
 Q_OBJECT
     Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
+    Q_PROPERTY(QQuickItem* origin MEMBER _origin)
     Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
     Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
-    Q_PROPERTY(qreal pixelscale MEMBER _pixel2meter)
+    Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
 
 public:
 
@@ -60,6 +61,7 @@ private:
     std::thread _broadcaster_thread;
 
     QQuickItem* _target;
+    QQuickItem* _origin;
     QString _frame;
     QString _parentframe;
 
