@@ -37,3 +37,6 @@ unix {
     INSTALLS += target qmldir javascript qml
 }
 
+DISTFILES += \
+    README.md
+

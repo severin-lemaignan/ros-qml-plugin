@@ -13,10 +13,13 @@
 #include <qqml.h>
 
 
+#include <ros/spinner.h>
 #include "ros.h"
 
 /**
- * @brief Object that exposes export the target QML item as ROS TF frames
+ * @brief A ROS bridge for QML objects
+ *
+ * Attention, the QML application is responsible to call ros::init().
  */
 class RosPlugin : public QQmlExtensionPlugin
 {
@@ -24,8 +27,14 @@ Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 
 public:
+    RosPlugin():spinner(1) {}
+
     void registerTypes(const char *uri);
     void initializeEngine(QQmlEngine *engine, const char *uri);
+
+private:
+
+    ros::AsyncSpinner spinner;
 };
 
 #endif // ROSPLUGIN_H

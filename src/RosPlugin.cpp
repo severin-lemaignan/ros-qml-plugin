@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <string>
+#include <thread>
 
 #include<QQmlEngine>
 #include <ros/ros.h>
@@ -15,14 +16,13 @@
 #include "RosPlugin.h"
 
 void RosPlugin::registerTypes(const char *uri){
-    qmlRegisterType<RosNode>(uri, 1, 0, "RosNode");
+    qmlRegisterType<RosPositionController>(uri, 1, 0, "RosPositionController");
     qmlRegisterType<TFBroadcaster>(uri, 1, 0, "TFBroadcaster");
 }
 
 void RosPlugin::initializeEngine(QQmlEngine *engine, const char *uri){
 
-    auto remappings = std::vector<std::pair<std::string, std::string>>();
-    ros::init(remappings,"sandtray");
 
+    spinner.start();
 }
 

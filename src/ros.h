@@ -6,28 +6,40 @@
 
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <geometry_msgs/PoseStamped.h>
 
 /**
  * @brief A ROS bridge for QML
  */
-class RosNode : public QQuickItem {
+class RosPositionController : public QQuickItem {
 Q_OBJECT
-    //Q_PROPERTY(QString pixelscale MEMBER _pixel2meter)
-    //Q_PROPERTY(QString node READ setName MEMBER _name)
+    Q_PROPERTY(bool position MEMBER _position NOTIFY onPositionChanged)
+    Q_PROPERTY(bool released MEMBER _released NOTIFY onReleasedChanged)
 
 public:
 
-    RosNode(QQuickItem* parent = 0) {}
+    RosPositionController(QQuickItem* parent = 0);
 
-    virtual ~RosNode() {}
+    virtual ~RosPositionController() {}
 
-    void setName(QString name);
+    void onIncomingPose(const geometry_msgs::PoseStamped&);
+
+private slots:
+    void updatePos(double x, double y);
+
+signals:
+    void onPositionChanged();
+    void onReleased();
+
+    void onMsgReceived(double x, double y);
 
 private:
 
-    ros::NodeHandle _node;
-    qreal _pixel2meter;
+    bool _position; // not really used, but required tfor 'onPositionChanged' to be valid in QML
+    bool _released; // not really used, but required tfor 'onReleased' to be valid in QML
 
+    ros::NodeHandle _node;
+    ros::Subscriber _incoming_poses;
 
 };
 

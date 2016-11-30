@@ -5,6 +5,31 @@
 
 using namespace std;
 
+RosPositionController::RosPositionController(QQuickItem *parent):
+    _incoming_poses(_node.subscribe("/move_base_simple/goal", 1, &RosPositionController::onIncomingPose, this))
+{
+
+    connect(this, SIGNAL(onMsgReceived(double, double)),
+            this, SLOT(updatePos(double, double)));
+
+}
+
+void RosPositionController::onIncomingPose(const geometry_msgs::PoseStamped &pose)
+{
+    cout << "Updated target pose!" << endl;
+    emit onMsgReceived(pose.pose.position.x, pose.pose.position.y);
+
+}
+
+void RosPositionController::updatePos(double x, double y)
+{
+    cout << "Youpi!" << endl;
+    setX(x);
+    setY(y);
+    emit onPositionChanged();
+
+}
+
 TFBroadcaster::TFBroadcaster(QQuickItem *parent):
     _initialized(false),
     _running(false),
@@ -46,7 +71,7 @@ void TFBroadcaster::setFrame(QString frame)
         _frame = frame;
         if (!_parentframe.isEmpty()) _initialized = true;
 
-        cout << "Frame set to: " << _frame.toStdString() << endl;
+        //cout << "Frame set to: " << _frame.toStdString() << endl;
 }
 
 
@@ -56,7 +81,7 @@ void TFBroadcaster::setParentFrame(QString frame)
         _parentframe = frame;
         if (!_frame.isEmpty()) _initialized = true;
 
-        cout << "Parent frame set to: " << _parentframe.toStdString() << endl;
+        //cout << "Parent frame set to: " << _parentframe.toStdString() << endl;
 }
 
 void TFBroadcaster::tfPublisher()
