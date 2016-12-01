@@ -99,13 +99,13 @@ void TFBroadcaster::tfPublisher()
         if(_initialized) {
             double x,y, theta;
             if (_origin) {
-                x = (_target->x() - _origin->x()) * _pixel2meter;
-                y = -(_target->y() - _origin->y()) * _pixel2meter;
+                x = (_target->mapToScene(QPoint(0,0)).x() - _origin->mapToScene(QPoint(0,0)).x()) * _pixel2meter;
+                y = -(_target->mapToScene(QPoint(0,0)).y() - _origin->mapToScene(QPoint(0,0)).y()) * _pixel2meter;
                 theta = -(_target->rotation() - _origin->rotation()) * M_PI/180;
             }
             else {
-                x = _target->x() * _pixel2meter;
-                y = -_target->y() * _pixel2meter;
+                x = _target->mapToScene(QPoint(0,0)).x() * _pixel2meter;
+                y = -_target->mapToScene(QPoint(0,0)).y() * _pixel2meter;
                 theta = -_target->rotation() * M_PI/180;
             }
 
