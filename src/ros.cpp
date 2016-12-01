@@ -8,7 +8,7 @@ using namespace std;
 RosPositionController::RosPositionController(QQuickItem *parent):
     _origin(nullptr),
     _pixel2meter(1),
-    _incoming_poses(_node.subscribe("/move_base_simple/goal", 1, &RosPositionController::onIncomingPose, this))
+    _incoming_poses(_node.subscribe("poses", 1, &RosPositionController::onIncomingPose, this))
 {
 
     connect(this, SIGNAL(onMsgReceived(double, double)),
