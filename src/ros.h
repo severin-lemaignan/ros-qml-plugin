@@ -86,5 +86,37 @@ private:
 
 };
 
+/**
+ * @brief The FootprintsPublisher class provides a QML object that publishes on a
+ * *latched topic* (/footprints) the 2D bounding boxes of each of its 'targets'.
+ * QML items in 'targets' must have a property 'boundingbox' that contains a Box2D fixture.
+ */
+class FootprintsPublisher : public QQuickItem {
+
+ Q_OBJECT
+    Q_PROPERTY(QVariantList targets WRITE setTargets MEMBER _targets)
+    Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
+
+public:
+
+    static const QString topic;
+
+    FootprintsPublisher(QQuickItem* parent = 0);
+
+    virtual ~FootprintsPublisher() {}
+
+    void setTargets(QVariantList targets);
+
+private:
+
+    QVariantList _targets;
+
+    qreal _pixel2meter;
+
+    ros::NodeHandle _node;
+    ros::Publisher _publisher;
+
+};
+
 #endif // ROS_H
 

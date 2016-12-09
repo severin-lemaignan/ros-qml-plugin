@@ -16,13 +16,14 @@
 #include "RosPlugin.h"
 
 void RosPlugin::registerTypes(const char *uri){
-    qmlRegisterType<RosPositionController>(uri, 1, 0, "RosPositionController");
+    qmlRegisterType<RosPositionController>(uri, 1, 0, "RosPose");
     qmlRegisterType<TFBroadcaster>(uri, 1, 0, "TFBroadcaster");
+    qmlRegisterType<FootprintsPublisher>(uri, 1, 0, "FootprintsPublisher");
 }
 
 void RosPlugin::initializeEngine(QQmlEngine *engine, const char *uri){
 
-
     spinner.start();
+
 }
 

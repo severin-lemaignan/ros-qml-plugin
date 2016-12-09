@@ -1,6 +1,11 @@
 #include <cmath>
 #include <iostream>
 #include <chrono>
+
+#include <visualization_msgs/MarkerArray.h>
+#include <visualization_msgs/Marker.h>
+#include <geometry_msgs/Point.h>
+
 #include "ros.h"
 
 using namespace std;
@@ -35,6 +40,7 @@ void RosPositionController::updatePos(double x, double y)
 
     setX(px);
     setY(py);
+
     emit onPositionChanged();
 
 }
@@ -119,5 +125,79 @@ void TFBroadcaster::tfPublisher()
         }
        this_thread::sleep_for(chrono::milliseconds(100));
     }
+
+}
+
+const QString FootprintsPublisher::topic = "footprints";
+
+FootprintsPublisher::FootprintsPublisher(QQuickItem *parent):
+    _pixel2meter(1),
+    _publisher(_node.advertise<visualization_msgs::MarkerArray>(topic.toStdString(), 1, true))
+{
+
+}
+
+void FootprintsPublisher::setTargets(QVariantList targets)
+{
+    visualization_msgs::MarkerArray markers;
+
+    cout << "Setting targets for footprint publishing. Got " << targets.length() << " of them" << endl;
+    QVariantList::const_iterator i;
+
+    int id = 0;
+
+    for (i = targets.begin(); i != targets.end(); ++i) {
+        auto item = (*i).value<QQuickItem*>();
+
+        auto target = item->property("name").value<QString>().toStdString();
+        auto boundingbox = item->property("boundingbox").value<QObject*>();
+        auto vertices = boundingbox->property("vertices").value<QVariantList>();
+
+        cout << target << endl;
+
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "/" + target;
+        marker.header.stamp = ros::Time::now();
+        marker.ns = "qml_items_footprints";
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.orientation.w = 1.0;
+
+        marker.id = id++;
+        marker.type = visualization_msgs::Marker::LINE_STRIP;
+        marker.scale.x = 0.005; // width of the visualized line
+        marker.color.b = 1.0;
+        marker.color.a = 1.0;
+
+
+        QVariantList::const_iterator point_it;
+
+        double bbx, bby;
+
+        for(point_it = vertices.begin(); point_it != vertices.end(); ++point_it) {
+            geometry_msgs::Point p;
+            auto point = (*point_it).value<QPointF>();
+            p.x = point.x() * _pixel2meter;
+            bbx += p.x;
+            p.y = -point.y() * _pixel2meter;
+            bby += p.y;
+            p.z = 0;
+            marker.points.push_back(p);
+        }
+        marker.points.push_back(marker.points.front());
+
+        // compute the center of the bounding box
+        bbx /= vertices.length();
+        bby /= vertices.length();
+
+        for (auto& p : marker.points) {
+            p.x -= bbx;
+            p.y -= bby;
+        }
+
+        markers.markers.push_back(marker);
+
+    }
+
+    _publisher.publish(markers);
 
 }
