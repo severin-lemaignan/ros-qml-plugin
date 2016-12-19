@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 
+#include <std_msgs/Empty.h>
+
 #include <visualization_msgs/MarkerArray.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
@@ -201,4 +203,22 @@ void FootprintsPublisher::setTargets(QVariantList targets)
 
     _publisher.publish(markers);
 
+}
+
+
+void RosSignal::setTopic(QString topic)
+{
+    _publisher = _node.advertise<std_msgs::Empty>(topic.toStdString(), 1);
+
+    _topic = topic;
+}
+
+void RosSignal::signal()
+{
+   if(_publisher.getTopic().empty()) {
+       cerr << "RosSignal.signal() called without any topic." << endl;
+       return;
+   }
+
+   _publisher.publish(std_msgs::Empty());
 }

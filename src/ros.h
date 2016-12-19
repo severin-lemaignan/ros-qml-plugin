@@ -120,5 +120,36 @@ private:
 
 };
 
+/**
+ * @brief The RosSignal class provides a QML object that publishes on a
+ * configurable topic an empty message (ie, a signal) every time signal() is
+ * called.
+ */
+class RosSignal : public QQuickItem {
+
+ Q_OBJECT
+    Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+
+public:
+
+    static const QString topic;
+
+    RosSignal(QQuickItem* parent = 0) {}
+
+    virtual ~RosSignal() {}
+
+    void setTopic(QString topic);
+
+    Q_INVOKABLE void signal();
+
+private:
+
+    QString _topic;
+
+    ros::NodeHandle _node;
+    ros::Publisher _publisher;
+
+};
+
 #endif // ROS_H
 
