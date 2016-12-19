@@ -152,6 +152,10 @@ void FootprintsPublisher::setTargets(QVariantList targets)
     for (i = targets.begin(); i != targets.end(); ++i) {
         auto item = (*i).value<QQuickItem*>();
 
+        if(!item) {
+            cerr << "One of my targets is does not exist! Skipping it." << endl;
+            continue;
+        }
         auto target = item->property("name").value<QString>().toStdString();
         auto boundingbox = item->property("boundingbox").value<QObject*>();
         auto vertices = boundingbox->property("vertices").value<QVariantList>();
