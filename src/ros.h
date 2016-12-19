@@ -50,6 +50,7 @@ private:
  */
 class TFBroadcaster : public QQuickItem {
 Q_OBJECT
+    Q_PROPERTY(bool active MEMBER _active)
     Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
     Q_PROPERTY(QQuickItem* origin MEMBER _origin)
     Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
@@ -70,6 +71,7 @@ private:
 
     void tfPublisher();
 
+    bool _active;
     bool _running;
     bool _initialized;
     std::thread _broadcaster_thread;

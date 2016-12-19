@@ -46,6 +46,7 @@ void RosPositionController::updatePos(double x, double y)
 }
 
 TFBroadcaster::TFBroadcaster(QQuickItem *parent):
+    _active(true),
     _initialized(false),
     _running(false),
     _target(nullptr),
@@ -102,7 +103,7 @@ void TFBroadcaster::setParentFrame(QString frame)
 void TFBroadcaster::tfPublisher()
 {
     while(_running) {
-        if(_initialized) {
+        if(_initialized && _active) {
             double x,y, theta;
             if (_origin) {
                 x = (_target->mapToScene(QPoint(0,0)).x() - _origin->mapToScene(QPoint(0,0)).x()) * _pixel2meter;
