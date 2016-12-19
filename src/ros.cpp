@@ -55,7 +55,8 @@ TFBroadcaster::TFBroadcaster(QQuickItem *parent):
     _origin(nullptr),
     _frame(""),
     _parentframe(""),
-    _pixel2meter(1)
+    _pixel2meter(1),
+    _zoffset(0)
 {
 
 }
@@ -119,7 +120,7 @@ void TFBroadcaster::tfPublisher()
             }
 
             tf::Transform transform;
-            transform.setOrigin( tf::Vector3(x, y, 0.0) );
+            transform.setOrigin( tf::Vector3(x, y, _zoffset) );
 
             tf::Quaternion q;
             q.setRPY(0, 0, theta);
@@ -178,7 +179,7 @@ void FootprintsPublisher::setTargets(QVariantList targets)
 
         QVariantList::const_iterator point_it;
 
-        double bbx, bby;
+        double bbx=0, bby=0;
 
         for(point_it = vertices.begin(); point_it != vertices.end(); ++point_it) {
             geometry_msgs::Point p;

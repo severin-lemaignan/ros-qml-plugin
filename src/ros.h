@@ -56,6 +56,7 @@ Q_OBJECT
     Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
     Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
     Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
+    Q_PROPERTY(double zoffset MEMBER _zoffset)
 
 public:
 
@@ -82,6 +83,7 @@ private:
     QString _parentframe;
 
     qreal _pixel2meter;
+    qreal _zoffset;
 
     ros::NodeHandle _node;
     tf::TransformBroadcaster _br;
