@@ -14,8 +14,7 @@ using namespace std;
 
 RosPositionController::RosPositionController(QQuickItem *parent):
     _origin(nullptr),
-    _pixel2meter(1),
-    _incoming_poses(_node.subscribe("poses", 1, &RosPositionController::onIncomingPose, this))
+    _pixel2meter(1)
 {
 
     connect(this, SIGNAL(onMsgReceived(double, double)),
@@ -46,6 +45,14 @@ void RosPositionController::updatePos(double x, double y)
     emit onPositionChanged();
 
 }
+
+void RosPositionController::setTopic(QString topic)
+{
+    _incoming_poses = _node.subscribe(topic.toStdString(), 1, &RosPositionController::onIncomingPose,this);
+
+    _topic = topic;
+}
+
 
 TFBroadcaster::TFBroadcaster(QQuickItem *parent):
     _active(true),

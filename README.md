@@ -55,3 +55,36 @@ Item {
     frame: "test_frame"
  }
 }
+
+### RosPose
+
+`RosPose` is a QML item whose position can be updated from a ROS `Pose` message.
+
+Only the `pose.x` and `pose.y` are used. Use `pixelscale`
+to set the conversion factor between pixels and meters (see example below).
+
+The (`x`, `y`) coordinates are relative to the QML item `origin`.
+
+The following example uses poses published on the `/poses` topic to move a blue
+rectangle on the screen:
+
+```qml
+
+Window {
+
+    RosPose {
+        id: mypose
+        topic: "/poses"
+        origin: parent
+        pixelscale: 200 // 200 pixels = 1 meter
+
+        Rect {
+            width: 10
+            height: 10
+            color: "blue"
+        }
+    }
+}
+```
+
+You can as well use `onPositionChanged` to react to position changes.

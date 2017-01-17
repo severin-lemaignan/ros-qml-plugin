@@ -16,12 +16,15 @@ Q_OBJECT
     Q_PROPERTY(bool position MEMBER _position NOTIFY onPositionChanged)
     Q_PROPERTY(QQuickItem* origin MEMBER _origin)
     Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
+    Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
 
 public:
 
     RosPositionController(QQuickItem* parent = 0);
 
     virtual ~RosPositionController() {}
+
+    void setTopic(QString topic);
 
     void onIncomingPose(const geometry_msgs::PoseStamped&);
 
@@ -34,6 +37,8 @@ signals:
     void onMsgReceived(double x, double y);
 
 private:
+
+    QString _topic;
 
     QQuickItem* _origin;
     double _pixel2meter;
@@ -133,8 +138,6 @@ class RosSignal : public QQuickItem {
     Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
 
 public:
-
-    static const QString topic;
 
     RosSignal(QQuickItem* parent = 0) {}
 
