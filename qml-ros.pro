@@ -4,10 +4,11 @@ TEMPLATE = lib
 TARGET = rosplugin
 
 CONFIG += qt plugin c++11 nostrip link_pkgconfig
+CONFIG += debug
 #CONFIG -= android_install
-PKGCONFIG += roscpp tf
+PKGCONFIG += roscpp tf image_transport
 
-QT += qml quick
+QT += qml quick widgets
 
 TARGET = $$qtLibraryTarget($$TARGET)
 uri = Ros

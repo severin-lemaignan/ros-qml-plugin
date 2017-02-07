@@ -7,6 +7,7 @@
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <image_transport/image_transport.h>
 
 /**
  * @brief A ROS bridge for QML
@@ -94,6 +95,59 @@ private:
     tf::TransformBroadcaster _br;
 
 };
+
+/**
+ * @brief The ImagePublisher class provides a QML object that publishes a QImage on a
+ * ROS topic (set it with the 'topic' property).
+ * The QML property 'target' must refer to a QML image. The property 'frame' should be set to
+ * the desired ROS frame.
+ *
+ * The image is published everytime the method 'publish()' is called.
+ *
+ * The size of the image can be set with the property 'width' and 'height'. By default, the
+ * actual size of the image item is used.
+ */
+class ImagePublisher : public QQuickItem {
+
+ Q_OBJECT
+    Q_PROPERTY(bool active MEMBER _active)
+    Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
+    Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+    Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
+    Q_PROPERTY(int width MEMBER _width)
+    Q_PROPERTY(int height MEMBER _height)
+
+public:
+
+    ImagePublisher(QQuickItem* parent = 0);
+
+    virtual ~ImagePublisher() {}
+
+    void setTarget(QQuickItem* target);
+    void setFrame(QString frame);
+    void setTopic(QString topic);
+
+    Q_INVOKABLE void publish();
+
+private:
+    bool _active;
+
+    void _rospublish(const QImage&);
+
+    QQuickItem* _target;
+
+    QString _topic;
+    QString _frame;
+
+    int _width;
+    int _height;
+
+    ros::NodeHandle _node;
+    image_transport::ImageTransport _it;
+    image_transport::Publisher _publisher;
+
+};
+
 
 /**
  * @brief The FootprintsPublisher class provides a QML object that publishes on a

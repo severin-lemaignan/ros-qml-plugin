@@ -1,6 +1,16 @@
 ROS QML plugin
 ==============
 
+Supports:
+
+- publishing the pose of QML items as TF frames
+- publishing QML items as ROS images
+- subscribing to ROS poses to move a QML item
+- signaling events by sending an `Empty` message on a specfic topic
+
+When used in conjunction with QML `Box2D` plugin, it can also publish the
+(Box2D) bounding boxes of items as polygons.
+
 Requirements
 ------------
 
@@ -54,6 +64,23 @@ Item {
     target: test
     frame: "test_frame"
  }
+
+ Image {
+    //...
+
+    ImagePublisher {
+      id: imgPublisher
+      target: parent
+      topic: "/qmlapp/image"
+      frame: "/map"
+      width: 800
+      height: 600
+    }
+
+    onPaintedGeometryChanged: imgPublisher.publish()
+
+ }
+
 }
 
 ### RosPose

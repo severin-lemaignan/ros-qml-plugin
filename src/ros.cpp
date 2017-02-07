@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 
+#include <QQuickItemGrabResult>
+
 #include <std_msgs/Empty.h>
 
 #include <visualization_msgs/MarkerArray.h>
@@ -11,6 +13,10 @@
 #include "ros.h"
 
 using namespace std;
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 RosPositionController::RosPositionController(QQuickItem *parent):
     _origin(nullptr),
@@ -53,6 +59,9 @@ void RosPositionController::setTopic(QString topic)
     _topic = topic;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 TFBroadcaster::TFBroadcaster(QQuickItem *parent):
     _active(true),
@@ -139,6 +148,89 @@ void TFBroadcaster::tfPublisher()
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+ImagePublisher::ImagePublisher(QQuickItem *parent):
+    _active(true),
+    _target(nullptr),
+    _frame(""),
+    _width(0),
+    _height(0),
+    _topic("image"),
+    _it(_node)
+{
+
+    _publisher = _it.advertise(_topic.toStdString(), 1);
+}
+
+
+void ImagePublisher::setTarget(QQuickItem* target)
+{
+
+   _target = target;
+}
+
+void ImagePublisher::publish() {
+
+   // if _width or _height are 0, size is invalid, and grabToImage uses the item actual size
+   QSize size(_width, _height);
+
+   auto result = _target->grabToImage(size);
+   connect(result.data(), &QQuickItemGrabResult::ready, this, [result, this] () {
+
+           this->_rospublish(result.data()->image());
+
+           }
+           );
+
+}
+
+void ImagePublisher::setFrame(QString frame)
+{
+
+        _frame = frame;
+        //cout << "Frame set to: " << _frame.toStdString() << endl;
+}
+
+void ImagePublisher::setTopic(QString topic)
+{
+
+    _topic = topic;
+    _publisher = _it.advertise(_topic.toStdString(), 1);
+}
+
+
+
+void ImagePublisher::_rospublish(const QImage& image)
+{
+
+    if(_active) {
+
+        auto size = image.size();
+        auto img = image.convertToFormat(QImage::Format_RGBA8888);
+
+        sensor_msgs::Image msg;
+        msg.header.frame_id = _frame.toStdString();
+        msg.header.stamp = ros::Time::now();
+        msg.height = size.height();
+        msg.width = size.width();
+        msg.step  = img.bytesPerLine();
+        msg.encoding = "rgba8";
+        msg.data.resize(img.byteCount()); // allocate memory
+        memcpy(msg.data.data(), img.constBits(), img.byteCount());
+
+        _publisher.publish(msg);
+
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
 const QString FootprintsPublisher::topic = "footprints";
 
 FootprintsPublisher::FootprintsPublisher(QQuickItem *parent):
@@ -217,6 +309,9 @@ void FootprintsPublisher::setTargets(QVariantList targets)
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 void RosSignal::setTopic(QString topic)
 {
