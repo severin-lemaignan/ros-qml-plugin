@@ -158,13 +158,40 @@ ImagePublisher::ImagePublisher(QQuickItem *parent):
     _frame(""),
     _width(0),
     _height(0),
+    _pixel2meter(1),
     _topic("image"),
     _it(_node)
 {
 
-    _publisher = _it.advertise(_topic.toStdString(), 1);
+    _publisher = _it.advertiseCamera(_topic.toStdString(), 1);
 }
 
+/* based on https://github.com/ros-drivers/video_stream_opencv/blob/master/src/video_stream.cpp
+*/
+sensor_msgs::CameraInfo ImagePublisher::makeCameraInfo(const sensor_msgs::Image& img){
+    sensor_msgs::CameraInfo cam_info_msg;
+    cam_info_msg.header.frame_id = img.header.frame_id;
+    // Fill image size
+    cam_info_msg.height = img.height;
+    cam_info_msg.width = img.width;
+    // Add the most common distortion model as sensor_msgs/CameraInfo says
+    cam_info_msg.distortion_model = "plumb_bob";
+    // Don't let distorsion matrix be empty
+    cam_info_msg.D.resize(5, 0.0);
+    // Give a reasonable default intrinsic camera matrix
+    cam_info_msg.K = {1./_pixel2meter, 0.0,             img.width/2.0, 
+                      0.0,             1./_pixel2meter, img.height/2.0, 
+                      0.0,             0.0,             1.0};
+    // Give a reasonable default rectification matrix
+    cam_info_msg.R = {1.0, 0.0, 0.0,
+                      0.0, 1.0, 0.0,
+                      0.0, 0.0, 1.0};
+    // Give a reasonable default projection matrix
+    cam_info_msg.P = {1./_pixel2meter, 0.0,             img.width/2.0,  0.0,
+                      0.0,             1./_pixel2meter, img.height/2.0, 0.0,
+                      0.0,             0.0,             1.0,            0.0};
+    return cam_info_msg;
+}
 
 void ImagePublisher::setTarget(QQuickItem* target)
 {
@@ -198,7 +225,7 @@ void ImagePublisher::setTopic(QString topic)
 {
 
     _topic = topic;
-    _publisher = _it.advertise(_topic.toStdString(), 1);
+    _publisher = _it.advertiseCamera(_topic.toStdString(), 1);
 }
 
 
@@ -221,7 +248,8 @@ void ImagePublisher::_rospublish(const QImage& image)
         msg.data.resize(img.byteCount()); // allocate memory
         memcpy(msg.data.data(), img.constBits(), img.byteCount());
 
-        _publisher.publish(msg);
+        auto camerainfo = makeCameraInfo(msg);
+        _publisher.publish(msg, camerainfo, ros::Time::now());
 
     }
 

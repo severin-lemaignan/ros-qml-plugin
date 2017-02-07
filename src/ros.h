@@ -8,6 +8,9 @@
 #include <tf/transform_broadcaster.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <image_transport/image_transport.h>
+#include <sensor_msgs/CameraInfo.h>
+#include <sensor_msgs/Image.h>
+
 
 /**
  * @brief A ROS bridge for QML
@@ -106,6 +109,10 @@ private:
  *
  * The size of the image can be set with the property 'width' and 'height'. By default, the
  * actual size of the image item is used.
+ *
+ * The property 'pixelscale' is used to compute the (virtual) focal length: f = 1/pixelscale.
+ * This can be used to convert the image's pixels into meters in the ROS code:
+ * 1 meter = 1 pixel * 1/f
  */
 class ImagePublisher : public QQuickItem {
 
@@ -116,6 +123,7 @@ class ImagePublisher : public QQuickItem {
     Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
     Q_PROPERTY(int width MEMBER _width)
     Q_PROPERTY(int height MEMBER _height)
+    Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
 
 public:
 
@@ -132,6 +140,7 @@ public:
 private:
     bool _active;
 
+    sensor_msgs::CameraInfo makeCameraInfo(const sensor_msgs::Image& img);
     void _rospublish(const QImage&);
 
     QQuickItem* _target;
@@ -141,10 +150,11 @@ private:
 
     int _width;
     int _height;
+    qreal _pixel2meter;
 
     ros::NodeHandle _node;
     image_transport::ImageTransport _it;
-    image_transport::Publisher _publisher;
+    image_transport::CameraPublisher _publisher;
 
 };
 
