@@ -13,7 +13,13 @@
 
 
 /**
- * @brief A ROS bridge for QML
+ * @brief A QtQuick item that follows a ROS pose published on a topic 'topic'.
+ *
+ * The scaling between the ROS pose coordinates (in meters) and the QML pixels can
+ * be set with the property 'pixelscale': pixels = meters / pixelscale
+ *
+ * The Z value of the pose is not directly used (as QML is 2D!), but can be read from the property
+ * 'zvalue'.
  */
 class RosPositionController : public QQuickItem {
 Q_OBJECT
@@ -21,6 +27,7 @@ Q_OBJECT
     Q_PROPERTY(QQuickItem* origin MEMBER _origin)
     Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
     Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+    Q_PROPERTY(qreal zvalue READ getZValue NOTIFY onZValueChanged)
 
 public:
 
@@ -29,16 +36,18 @@ public:
     virtual ~RosPositionController() {}
 
     void setTopic(QString topic);
+    qreal getZValue() {return _zvalue;}
 
     void onIncomingPose(const geometry_msgs::PoseStamped&);
 
 private slots:
-    void updatePos(double x, double y);
+    void updatePos(double x, double y, double z);
 
 signals:
     void onPositionChanged();
+    void onZValueChanged();
 
-    void onMsgReceived(double x, double y);
+    void onMsgReceived(double x, double y, double z);
 
 private:
 
@@ -48,6 +57,8 @@ private:
     double _pixel2meter;
 
     bool _position; // not really used, but required tfor 'onPositionChanged' to be valid in QML
+
+    qreal _zvalue;
 
     ros::NodeHandle _node;
     ros::Subscriber _incoming_poses;

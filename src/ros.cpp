@@ -23,17 +23,17 @@ RosPositionController::RosPositionController(QQuickItem *parent):
     _pixel2meter(1)
 {
 
-    connect(this, SIGNAL(onMsgReceived(double, double)),
-            this, SLOT(updatePos(double, double)));
+    connect(this, SIGNAL(onMsgReceived(double, double, double)),
+            this, SLOT(updatePos(double, double, double)));
 
 }
 
 void RosPositionController::onIncomingPose(const geometry_msgs::PoseStamped &pose)
 {
-    emit onMsgReceived(pose.pose.position.x, pose.pose.position.y);
+    emit onMsgReceived(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
 }
 
-void RosPositionController::updatePos(double x, double y)
+void RosPositionController::updatePos(double x, double y, double z)
 {
     double px,py;
     if (_origin) {
@@ -49,6 +49,10 @@ void RosPositionController::updatePos(double x, double y)
     setY(py);
 
     emit onPositionChanged();
+
+    auto oldz = _zvalue;
+    _zvalue = z;
+    if (z != oldz) emit onZValueChanged();
 
 }
 
