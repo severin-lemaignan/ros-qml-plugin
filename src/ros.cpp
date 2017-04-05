@@ -14,6 +14,8 @@
 
 using namespace std;
 
+const double EPSILON = 0.5;
+
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,10 +47,13 @@ void RosPositionController::updatePos(double x, double y, double z)
         py = -y / _pixel2meter;
     }
 
-    setX(px);
-    setY(py);
+    if (abs(px - this->x()) > EPSILON || abs(py - this->y()) > EPSILON) {
 
-    emit onPositionChanged();
+        setX(px);
+        setY(py);
+
+        emit onPositionChanged();
+    }
 
     auto oldz = _zvalue;
     _zvalue = z;
@@ -62,6 +67,107 @@ void RosPositionController::setTopic(QString topic)
 
     _topic = topic;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+TFListener::TFListener(QQuickItem *parent):
+    _active(true),
+    _initialized(false),
+    _running(false),
+    _origin(nullptr),
+    _frame(""),
+    _parentframe(""),
+    _pixel2meter(1)
+{
+
+    connect(this, SIGNAL(onMsgReceived(double, double, double)),
+            this, SLOT(updatePos(double, double, double)));
+
+}
+
+TFListener::~TFListener()
+{
+    if (_running) {
+        _running=false;
+        _listener_thread.join();
+    }
+
+}
+
+void TFListener::setFrame(QString frame)
+{
+
+   _frame = frame;
+   if (!_parentframe.isEmpty()) _initialized = true;
+
+   if (!_running) {
+       _running = true;
+
+       _listener_thread = std::thread(&TFListener::listen, this);
+
+   }
+
+}
+
+void TFListener::setParentFrame(QString frame)
+{
+
+        _parentframe = frame;
+        if (!_frame.isEmpty()) _initialized = true;
+
+        //cout << "Parent frame set to: " << _parentframe.toStdString() << endl;
+}
+
+void TFListener::updatePos(double x, double y, double z)
+{
+
+    double px,py;
+    if (_origin) {
+        px = x / _pixel2meter + _origin->x();
+        py = -y / _pixel2meter + _origin->y();
+    }
+    else {
+        px = x / _pixel2meter;
+        py = -y / _pixel2meter;
+    }
+
+    if (abs(px - this->x()) > EPSILON || abs(py - this->y()) > EPSILON) {
+
+        setX(px);
+        setY(py);
+
+        emit onPositionChanged();
+    }
+
+    auto oldz = _zvalue;
+    _zvalue = z;
+    if (z != oldz) emit onZValueChanged();
+
+}
+
+void TFListener::listen()
+{
+    while(_running) {
+        if(_initialized && _active) {
+
+            tf::StampedTransform transform;
+
+            try {
+                _listener.lookupTransform(_parentframe.toStdString(), _frame.toStdString(),
+                                          ros::Time(0), transform);
+                emit onMsgReceived(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
+            }
+            catch (tf::TransformException ex){
+                ROS_ERROR_THROTTLE(10,"%s",ex.what());
+            }
+       }
+       this_thread::sleep_for(chrono::milliseconds(50));
+    }
+
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,7 @@
 
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
+#include <tf/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/CameraInfo.h>
@@ -64,6 +65,74 @@ private:
     ros::Subscriber _incoming_poses;
 
 };
+
+/**
+ * @brief A QtQuick item that follows a ROS TF frame.
+ *
+ * The TF frame is first transformed into the provided ROS 'parentframe'
+ * frame, and the (x,y) coordinates of the resulting frame are used to place
+ * the QtQuick item wrt to the 'origin' item (or (0,0) if 'origin' is not set).
+ *
+ * The scaling between the ROS coordinates (in meters) and the QML pixels can
+ * be set with the property 'pixelscale': pixels = meters / pixelscale
+ *
+ * The Z value of the frame is not directly used (as QML is 2D!), but can be
+ * read from the property 'zvalue'.
+ */
+class TFListener : public QQuickItem {
+    Q_OBJECT
+        Q_PROPERTY(bool position MEMBER _position NOTIFY onPositionChanged)
+        Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
+        Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
+        Q_PROPERTY(QQuickItem* origin MEMBER _origin)
+        Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
+        Q_PROPERTY(qreal zvalue READ getZValue NOTIFY onZValueChanged)
+
+public:
+
+    TFListener(QQuickItem* parent = 0);
+
+    virtual ~TFListener();
+
+    void setFrame(QString topic);
+    void setParentFrame(QString topic);
+    qreal getZValue() {return _zvalue;}
+
+    void onIncomingPose(const geometry_msgs::PoseStamped&);
+
+private slots:
+    void updatePos(double x, double y, double z);
+
+signals:
+    void onPositionChanged();
+    void onZValueChanged();
+
+    void onMsgReceived(double x, double y, double z);
+
+private:
+
+    void listen(); // method ran in the thread that actually listen to the TF updates
+
+    QString _frame;
+    QString _parentframe;
+
+    QQuickItem* _origin;
+    double _pixel2meter;
+
+    bool _position; // not really used, but required tfor 'onPositionChanged' to be valid in QML
+
+    qreal _zvalue;
+
+    bool _active;
+    bool _running;
+    bool _initialized;
+    std::thread _listener_thread;
+
+    ros::NodeHandle _node;
+    tf::TransformListener _listener;
+
+};
+
 
 /**
  * @brief A QML Item that broadcast its target's pose to TF

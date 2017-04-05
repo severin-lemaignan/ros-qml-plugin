@@ -17,6 +17,7 @@
 
 void RosPlugin::registerTypes(const char *uri){
     qmlRegisterType<RosPositionController>(uri, 1, 0, "RosPose");
+    qmlRegisterType<TFListener>(uri, 1, 0, "TFListener");
     qmlRegisterType<TFBroadcaster>(uri, 1, 0, "TFBroadcaster");
     qmlRegisterType<FootprintsPublisher>(uri, 1, 0, "FootprintsPublisher");
     qmlRegisterType<RosSignal>(uri, 1, 0, "RosSignal");
