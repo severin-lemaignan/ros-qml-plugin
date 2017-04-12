@@ -42,13 +42,13 @@ public:
     void onIncomingPose(const geometry_msgs::PoseStamped&);
 
 private slots:
-    void updatePos(double x, double y, double z);
+    void updatePos(double x, double y, double z, double rotation);
 
 signals:
     void onPositionChanged();
     void onZValueChanged();
 
-    void onMsgReceived(double x, double y, double z);
+    void onMsgReceived(double x, double y, double z, double rotation);
 
 private:
 
@@ -101,13 +101,13 @@ public:
     void onIncomingPose(const geometry_msgs::PoseStamped&);
 
 private slots:
-    void updatePos(double x, double y, double z);
+    void updatePos(double x, double y, double z, double rotation);
 
 signals:
     void onPositionChanged();
     void onZValueChanged();
 
-    void onMsgReceived(double x, double y, double z);
+    void onMsgReceived(double x, double y, double z, double rotation);
 
 private:
 

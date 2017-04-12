@@ -9,6 +9,7 @@
 #include <visualization_msgs/MarkerArray.h>
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
+#include <tf/transform_datatypes.h>
 
 #include "ros.h"
 
@@ -25,17 +26,17 @@ RosPositionController::RosPositionController(QQuickItem *parent):
     _pixel2meter(1)
 {
 
-    connect(this, SIGNAL(onMsgReceived(double, double, double)),
-            this, SLOT(updatePos(double, double, double)));
+    connect(this, SIGNAL(onMsgReceived(double, double, double, double)),
+            this, SLOT(updatePos(double, double, double, double)));
 
 }
 
 void RosPositionController::onIncomingPose(const geometry_msgs::PoseStamped &pose)
 {
-    emit onMsgReceived(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z);
+    emit onMsgReceived(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, 0);
 }
 
-void RosPositionController::updatePos(double x, double y, double z)
+void RosPositionController::updatePos(double x, double y, double z, double rotation)
 {
     double px,py;
     if (_origin) {
@@ -82,8 +83,8 @@ TFListener::TFListener(QQuickItem *parent):
     _pixel2meter(1)
 {
 
-    connect(this, SIGNAL(onMsgReceived(double, double, double)),
-            this, SLOT(updatePos(double, double, double)));
+    connect(this, SIGNAL(onMsgReceived(double, double, double, double)),
+            this, SLOT(updatePos(double, double, double, double)));
 
 }
 
@@ -120,23 +121,23 @@ void TFListener::setParentFrame(QString frame)
         //cout << "Parent frame set to: " << _parentframe.toStdString() << endl;
 }
 
-void TFListener::updatePos(double x, double y, double z)
+void TFListener::updatePos(double x, double y, double z, double rotation)
 {
-
-    double px,py;
+    double px,py,theta;
     if (_origin) {
         px = x / _pixel2meter + _origin->x();
         py = -y / _pixel2meter + _origin->y();
+	theta = -(rotation - _origin->rotation()) * 180/M_PI;
     }
     else {
         px = x / _pixel2meter;
         py = -y / _pixel2meter;
     }
 
-    if (abs(px - this->x()) > EPSILON || abs(py - this->y()) > EPSILON) {
-
+    if (abs(px - this->x()) > EPSILON || abs(py - this->y()) > EPSILON || abs(theta - this->rotation()) > EPSILON ) {
         setX(px);
         setY(py);
+	setRotation(theta);
 
         emit onPositionChanged();
     }
@@ -155,9 +156,11 @@ void TFListener::listen()
             tf::StampedTransform transform;
 
             try {
-                _listener.lookupTransform(_parentframe.toStdString(), _frame.toStdString(),
-                                          ros::Time(0), transform);
-                emit onMsgReceived(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
+                _listener.lookupTransform(_parentframe.toStdString(), _frame.toStdString(), ros::Time(0), transform);
+                tf::Matrix3x3 m(transform.getRotation());
+                double roll, pitch, yaw;
+                m.getRPY(roll, pitch, yaw);
+                emit onMsgReceived(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(),yaw);
             }
             catch (tf::TransformException ex){
                 ROS_ERROR_THROTTLE(10,"%s",ex.what());
