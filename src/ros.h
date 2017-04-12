@@ -22,7 +22,7 @@
  * The Z value of the pose is not directly used (as QML is 2D!), but can be read from the property
  * 'zvalue'.
  */
-class RosPositionController : public QQuickItem {
+class RosPoseSubscriber : public QQuickItem {
 Q_OBJECT
     Q_PROPERTY(bool position MEMBER _position NOTIFY onPositionChanged)
     Q_PROPERTY(QQuickItem* origin MEMBER _origin)
@@ -32,9 +32,9 @@ Q_OBJECT
 
 public:
 
-    RosPositionController(QQuickItem* parent = 0);
+    RosPoseSubscriber(QQuickItem* parent = 0);
 
-    virtual ~RosPositionController() {}
+    virtual ~RosPoseSubscriber() {}
 
     void setTopic(QString topic);
     qreal getZValue() {return _zvalue;}
@@ -63,7 +63,48 @@ private:
 
     ros::NodeHandle _node;
     ros::Subscriber _incoming_poses;
+};
 
+/**
+ * @brief A QtQuick item that publish a ROS pose on a topic 'topic'.
+ *
+ * The scaling between the ROS pose coordinates (in meters) and the QML pixels can
+ * be set with the property 'pixelscale': pixels = meters / pixelscale
+ *
+ * The Z value of the pose is not directly used (as QML is 2D!), but can be sent from the property
+ * 'zvalue'.
+ */
+class RosPosePublisher : public QQuickItem {
+Q_OBJECT
+    Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
+    Q_PROPERTY(QQuickItem* origin MEMBER _origin)
+    Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
+    Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
+    Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+
+public:
+    RosPosePublisher(QQuickItem* parent = 0);
+    virtual ~RosPosePublisher() {}
+
+    Q_INVOKABLE void publish();
+
+    void setTopic(QString topic);
+    void setTarget(QQuickItem* target);
+    void setFrame(QString frame);
+private:
+    qreal _pixel2meter;
+
+    QQuickItem* _target;
+    QQuickItem* _origin;
+
+    QString _topic;
+    QString _frame;
+
+    int _width;
+    int _height;
+
+    ros::NodeHandle _node;
+    ros::Publisher _publisher;
 };
 
 /**
@@ -142,8 +183,8 @@ Q_OBJECT
     Q_PROPERTY(bool active MEMBER _active)
     Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
     Q_PROPERTY(QQuickItem* origin MEMBER _origin)
-    Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
     Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
+    Q_PROPERTY(QString parentframe WRITE setParentFrame MEMBER _parentframe)
     Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
     Q_PROPERTY(double zoffset MEMBER _zoffset)
 

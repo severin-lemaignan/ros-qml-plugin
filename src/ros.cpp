@@ -17,11 +17,11 @@ using namespace std;
 
 const double EPSILON = 0.5;
 
-///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-RosPositionController::RosPositionController(QQuickItem *parent):
+RosPoseSubscriber::RosPoseSubscriber(QQuickItem *parent):
     _origin(nullptr),
     _pixel2meter(1)
 {
@@ -31,12 +31,12 @@ RosPositionController::RosPositionController(QQuickItem *parent):
 
 }
 
-void RosPositionController::onIncomingPose(const geometry_msgs::PoseStamped &pose)
+void RosPoseSubscriber::onIncomingPose(const geometry_msgs::PoseStamped &pose)
 {
     emit onMsgReceived(pose.pose.position.x, pose.pose.position.y, pose.pose.position.z, 0);
 }
 
-void RosPositionController::updatePos(double x, double y, double z, double rotation)
+void RosPoseSubscriber::updatePos(double x, double y, double z, double rotation)
 {
     double px,py;
     if (_origin) {
@@ -62,11 +62,69 @@ void RosPositionController::updatePos(double x, double y, double z, double rotat
 
 }
 
-void RosPositionController::setTopic(QString topic)
+void RosPoseSubscriber::setTopic(QString topic)
 {
-    _incoming_poses = _node.subscribe(topic.toStdString(), 1, &RosPositionController::onIncomingPose,this);
+    _incoming_poses = _node.subscribe(topic.toStdString(), 1, &RosPoseSubscriber::onIncomingPose,this);
 
     _topic = topic;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+RosPosePublisher::RosPosePublisher(QQuickItem *parent):
+    _topic("topic"),
+    _target(nullptr),
+    _origin(nullptr),
+    _frame(""),
+    _width(0),
+    _height(0),
+    _pixel2meter(1)
+{
+}
+
+void RosPosePublisher::setTopic(QString topic)
+{
+    _publisher = _node.advertise<geometry_msgs::PoseStamped>(topic.toStdString(), 1);
+    _topic = topic;
+}
+
+
+void RosPosePublisher::setTarget(QQuickItem* target)
+{
+   _target = target;
+}
+
+void RosPosePublisher::setFrame(QString frame)
+{
+	_frame = frame;
+}
+
+void RosPosePublisher::publish(){
+    double x,y, theta;
+    if (_origin) {
+        x = _origin->mapFromItem(_target,QPoint(0,0)).x() * _pixel2meter;
+        y = - _origin->mapFromItem(_target,QPoint(0,0)).y() * _pixel2meter;
+        theta = (_target->rotation() - _origin->rotation()) * M_PI/180;
+    }
+    else {
+        x = _target->mapToScene(QPoint(0,0)).x() * _pixel2meter;
+        y = -_target->mapToScene(QPoint(0,0)).y() * _pixel2meter;
+        theta = -_target->rotation() * M_PI/180;
+    }
+
+    geometry_msgs::PoseStamped pose;
+	pose.header.frame_id = _frame.toStdString();
+	pose.header.stamp = ros::Time(0);
+	pose.pose.position.x = x;
+	pose.pose.position.y = y;
+	pose.pose.position.z = 0;
+    tf::Quaternion q;
+    q.setRPY(0, 0, theta);
+	quaternionTFToMsg(q,pose.pose.orientation);
+	
+    _publisher.publish(pose);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
