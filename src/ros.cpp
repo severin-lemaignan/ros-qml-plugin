@@ -135,7 +135,6 @@ void TFListener::updatePos(double x, double y, double z, double rotation)
     }
 
     if (abs(px - this->x()) > EPSILON || abs(py - this->y()) > EPSILON || abs(theta - this->rotation()) > EPSILON ) {
-        cout << rotation << " " <<theta<< endl;
         setX(px);
         setY(py);
 	setRotation(theta);
