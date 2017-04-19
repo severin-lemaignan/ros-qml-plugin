@@ -321,6 +321,7 @@ void ImagePublisher::publish() {
    connect(result.data(), &QQuickItemGrabResult::ready, this, [result, this] () {
 
            this->_rospublish(result.data()->image());
+           result.data()->disconnect(); // disconnect the signal, and as a consequence, free the shared ptr 'result'
 
            }
            );
