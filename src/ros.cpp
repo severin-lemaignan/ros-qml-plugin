@@ -248,13 +248,16 @@ void TFBroadcaster::tfPublisher()
                 theta = -_target->rotation() * M_PI/180;
             }
 
-            tf::Transform transform;
-            transform.setOrigin( tf::Vector3(x, y, _zoffset) );
+            if (!isnan(x) && !isnan(y) && !isnan(theta)) {
 
-            tf::Quaternion q;
-            q.setRPY(0, 0, theta);
-            transform.setRotation(q);
-            _br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), _parentframe.toStdString(), _frame.toStdString()));
+                tf::Transform transform;
+                transform.setOrigin( tf::Vector3(x, y, _zoffset) );
+
+                tf::Quaternion q;
+                q.setRPY(0, 0, theta);
+                transform.setRotation(q);
+                _br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), _parentframe.toStdString(), _frame.toStdString()));
+            }
         }
        this_thread::sleep_for(chrono::milliseconds(100));
     }
