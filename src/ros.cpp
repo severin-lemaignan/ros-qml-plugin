@@ -519,8 +519,13 @@ void FootprintsPublisher::setTargets(QVariantList targets)
 void RosSignal::setTopic(QString topic)
 {
     _publisher = _node.advertise<std_msgs::Empty>(topic.toStdString(), 1);
-
+    _subscriber = _node.subscribe(topic.toStdString(),1,&RosSignal::onIncomingSignal,this);
     _topic = topic;
+}
+
+void RosSignal::onIncomingSignal(const std_msgs::Empty emp)
+{
+    emit triggered();
 }
 
 void RosSignal::signal()

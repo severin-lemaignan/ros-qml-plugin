@@ -321,7 +321,6 @@ class RosSignal : public QQuickItem {
 
  Q_OBJECT
     Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
-
 public:
 
     RosSignal(QQuickItem* parent = 0) {}
@@ -332,13 +331,19 @@ public:
 
     Q_INVOKABLE void signal();
 
+    void onIncomingSignal(const std_msgs::Empty);
+
+signals:
+    void triggered();
+
 private:
 
     QString _topic;
+    bool _received;
 
     ros::NodeHandle _node;
     ros::Publisher _publisher;
-
+    ros::Subscriber _subscriber;
 };
 
 #endif // ROS_H
