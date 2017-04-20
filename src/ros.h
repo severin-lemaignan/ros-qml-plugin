@@ -8,6 +8,7 @@
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <std_msgs/String.h>
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/CameraInfo.h>
 #include <sensor_msgs/Image.h>
@@ -103,6 +104,58 @@ private:
     int _width;
     int _height;
 
+    ros::NodeHandle _node;
+    ros::Publisher _publisher;
+};
+
+/**
+ * @brief A QtQuick item that follows a ROS String published on a topic 'topic'.
+ */
+class RosStringSubscriber : public QQuickItem {
+Q_OBJECT
+    Q_PROPERTY(QString text MEMBER _text NOTIFY onTextChanged)
+    Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+
+public:
+
+    RosStringSubscriber(QQuickItem* parent = 0){}
+
+    virtual ~RosStringSubscriber() {}
+
+    void setTopic(QString topic);
+    void onIncomingString(const std_msgs::String& str);
+
+signals:
+    void onTextChanged();
+
+private:
+
+    QString _topic;
+    QString _text;
+
+    ros::NodeHandle _node;
+    ros::Subscriber _incoming_message;
+};
+
+/**
+ * @brief A QtQuick item that publish a ROS string on a topic 'topic'.
+ *
+ */
+class RosStringPublisher : public QQuickItem {
+Q_OBJECT
+    Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+    Q_PROPERTY(QString text WRITE setText MEMBER _text )
+
+public:
+    RosStringPublisher(QQuickItem* parent = 0){}
+    virtual ~RosStringPublisher() {}
+
+    void setTopic(QString topic);
+    void setText(QString text);
+    Q_INVOKABLE void publish();
+private:
+    QString _topic;
+    QString _text;
     ros::NodeHandle _node;
     ros::Publisher _publisher;
 };
@@ -339,7 +392,6 @@ signals:
 private:
 
     QString _topic;
-    bool _received;
 
     ros::NodeHandle _node;
     ros::Publisher _publisher;
