@@ -10,10 +10,12 @@
 #include <string>
 #include <thread>
 
-#include<QQmlEngine>
+#include <QQmlEngine>
 #include <ros/ros.h>
 
 #include "RosPlugin.h"
+
+#include "RosImageProvider.h"
 
 void RosPlugin::registerTypes(const char *uri){
     qmlRegisterType<RosPoseSubscriber>(uri, 1, 0, "RosPoseSubscriber");
@@ -29,7 +31,9 @@ void RosPlugin::registerTypes(const char *uri){
 
 void RosPlugin::initializeEngine(QQmlEngine *engine, const char *uri){
 
-    spinner.start();
+    Q_UNUSED(uri);
 
+    spinner.start();
+    engine->addImageProvider("rosimage", new RosImageProvider);
 }
 

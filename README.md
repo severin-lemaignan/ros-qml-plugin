@@ -93,6 +93,32 @@ Item {
  }
 
 }
+```
+
+### Displaying ROS image topics
+
+This uses a QML ImageProvider. Specify the topic using: `img.source = "image://rosimage/<your topic>"`.
+
+Typical usage, that refreshes the image at 20Hz:
+
+```qml
+import Ros 1.0
+
+Image {
+	id: img
+	cache: false
+
+	anchors.fill: parent
+	source: "image://rosimage/v4l/camera/image_raw"
+
+	Timer {
+		interval: 50
+		repeat: true
+		running: true
+		onTriggered: { img.source = ""; img.source = "image://rosimage/v4l/camera/image_raw" }
+	}
+}
+```
 
 ### RosPose
 

@@ -15,10 +15,12 @@ uri = Ros
 
 HEADERS += \
     src/RosPlugin.h \
+    src/RosImageProvider.h \
     src/ros.h
 
 SOURCES += \
     src/RosPlugin.cpp \
+    src/RosImageProvider.cpp \
     src/ros.cpp
 
 #File installation
