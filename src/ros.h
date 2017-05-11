@@ -284,9 +284,12 @@ private:
  * The size of the image can be set with the property 'width' and 'height'. By default, the
  * actual size of the image item is used.
  *
- * The property 'pixelscale' is used to compute the (virtual) focal length: f = 1/pixelscale.
- * This can be used to convert the image's pixels into meters in the ROS code:
- * 1 meter = 1 pixel * 1/f
+ * The image can be published on a latched topic by setting `latched: True` (by
+ * default, not latched).
+ *
+ * The property 'pixelscale' is used to compute the (virtual) focal length: f =
+ * 1/pixelscale.  This can be used to convert the image's pixels into meters in
+ * the ROS code: 1 meter = 1 pixel * 1/f
  */
 class ImagePublisher : public QQuickItem {
 
@@ -295,6 +298,7 @@ class ImagePublisher : public QQuickItem {
     Q_PROPERTY(QQuickItem* target WRITE setTarget MEMBER _target)
     Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
     Q_PROPERTY(QString frame WRITE setFrame MEMBER _frame)
+    Q_PROPERTY(bool latched WRITE setLatched MEMBER _latched)
     Q_PROPERTY(int width MEMBER _width)
     Q_PROPERTY(int height MEMBER _height)
     Q_PROPERTY(double pixelscale MEMBER _pixel2meter)
@@ -308,6 +312,7 @@ public:
     void setTarget(QQuickItem* target);
     void setFrame(QString frame);
     void setTopic(QString topic);
+    void setLatched(bool latched);
 
     Q_INVOKABLE void publish();
 
@@ -321,6 +326,7 @@ private:
 
     QString _topic;
     QString _frame;
+    bool _latched;
 
     int _width;
     int _height;

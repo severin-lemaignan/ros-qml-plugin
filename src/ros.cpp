@@ -378,10 +378,11 @@ ImagePublisher::ImagePublisher(QQuickItem *parent):
     _height(0),
     _pixel2meter(1),
     _topic("image"),
+    _latched(false),
     _it(_node)
 {
 
-    _publisher = _it.advertiseCamera(_topic.toStdString(), 1);
+    _publisher = _it.advertiseCamera(_topic.toStdString(), 1, _latched);
 }
 
 /* based on https://github.com/ros-drivers/video_stream_opencv/blob/master/src/video_stream.cpp
@@ -417,6 +418,8 @@ void ImagePublisher::setTarget(QQuickItem* target)
    _target = target;
 }
 
+
+
 void ImagePublisher::publish() {
 
    // if _width or _height are 0, size is invalid, and grabToImage uses the item actual size
@@ -443,10 +446,23 @@ void ImagePublisher::setFrame(QString frame)
 void ImagePublisher::setTopic(QString topic)
 {
 
-    _topic = topic;
-    _publisher = _it.advertiseCamera(_topic.toStdString(), 1);
+    if(topic != _topic) {
+        _topic = topic;
+        _publisher.shutdown();
+        _publisher = _it.advertiseCamera(_topic.toStdString(), 1, _latched);
+    }
 }
 
+void ImagePublisher::setLatched(bool latched)
+{
+
+    if (latched != _latched) {
+        _latched = latched;
+        _publisher.shutdown();
+        _publisher = _it.advertiseCamera(_topic.toStdString(), 1, _latched);
+    }
+
+}
 
 
 void ImagePublisher::_rospublish(const QImage& image)
