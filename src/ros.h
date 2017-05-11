@@ -93,16 +93,16 @@ public:
     void setTarget(QQuickItem* target);
     void setFrame(QString frame);
 private:
-    qreal _pixel2meter;
-
-    QQuickItem* _target;
-    QQuickItem* _origin;
 
     QString _topic;
+    QQuickItem* _target;
+    QQuickItem* _origin;
     QString _frame;
 
     int _width;
     int _height;
+
+    qreal _pixel2meter;
 
     ros::NodeHandle _node;
     ros::Publisher _publisher;
@@ -205,6 +205,11 @@ signals:
 
 private:
 
+    bool _initialized;
+    bool _active;
+    bool _running;
+    std::thread _listener_thread;
+
     void listen(); // method ran in the thread that actually listen to the TF updates
 
     QString _frame;
@@ -217,10 +222,6 @@ private:
 
     qreal _zvalue;
 
-    bool _active;
-    bool _running;
-    bool _initialized;
-    std::thread _listener_thread;
 
     ros::NodeHandle _node;
     tf::TransformListener _listener;
@@ -255,9 +256,9 @@ private:
 
     void tfPublisher();
 
+    bool _initialized;
     bool _active;
     bool _running;
-    bool _initialized;
     std::thread _broadcaster_thread;
 
     QQuickItem* _target;

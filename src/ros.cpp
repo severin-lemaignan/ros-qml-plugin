@@ -21,7 +21,7 @@ const double EPSILON = 0.5;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-RosPoseSubscriber::RosPoseSubscriber(QQuickItem *parent):
+RosPoseSubscriber::RosPoseSubscriber(QQuickItem* /* parent */):
     _origin(nullptr),
     _pixel2meter(1)
 {
@@ -73,7 +73,7 @@ void RosPoseSubscriber::setTopic(QString topic)
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-RosPosePublisher::RosPosePublisher(QQuickItem *parent):
+RosPosePublisher::RosPosePublisher(QQuickItem* /* parent */):
     _topic("topic"),
     _target(nullptr),
     _origin(nullptr),
@@ -115,15 +115,15 @@ void RosPosePublisher::publish(){
     }
 
     geometry_msgs::PoseStamped pose;
-	pose.header.frame_id = _frame.toStdString();
-	pose.header.stamp = ros::Time(0);
-	pose.pose.position.x = x;
-	pose.pose.position.y = y;
-	pose.pose.position.z = 0;
+    pose.header.frame_id = _frame.toStdString();
+    pose.header.stamp = ros::Time(0);
+    pose.pose.position.x = x;
+    pose.pose.position.y = y;
+    pose.pose.position.z = 0;
     tf::Quaternion q;
     q.setRPY(0, 0, theta);
-	quaternionTFToMsg(q,pose.pose.orientation);
-	
+    quaternionTFToMsg(q,pose.pose.orientation);
+
     _publisher.publish(pose);
 }
 
@@ -175,13 +175,13 @@ void RosStringPublisher::publish(){
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-TFListener::TFListener(QQuickItem *parent):
-    _active(true),
+TFListener::TFListener(QQuickItem* /* parent */):
     _initialized(false),
+    _active(true),
     _running(false),
-    _origin(nullptr),
     _frame(""),
     _parentframe(""),
+    _origin(nullptr),
     _pixel2meter(1)
 {
 
@@ -229,7 +229,7 @@ void TFListener::updatePos(double x, double y, double z, double rotation)
     if (_origin) {
         px = x / _pixel2meter + _origin->x();
         py = -y / _pixel2meter + _origin->y();
-	theta = -(rotation - _origin->rotation()) * 180/M_PI;
+        theta = -(rotation - _origin->rotation()) * 180/M_PI;
     }
     else {
         px = x / _pixel2meter;
@@ -239,7 +239,7 @@ void TFListener::updatePos(double x, double y, double z, double rotation)
     if (abs(px - this->x()) > EPSILON || abs(py - this->y()) > EPSILON || abs(theta - this->rotation()) > EPSILON ) {
         setX(px);
         setY(py);
-	setRotation(theta);
+        setRotation(theta);
 
         emit onPositionChanged();
     }
@@ -278,9 +278,9 @@ void TFListener::listen()
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-TFBroadcaster::TFBroadcaster(QQuickItem *parent):
-    _active(true),
+TFBroadcaster::TFBroadcaster(QQuickItem* /* parent */):
     _initialized(false),
+    _active(true),
     _running(false),
     _target(nullptr),
     _origin(nullptr),
@@ -370,15 +370,15 @@ void TFBroadcaster::tfPublisher()
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-ImagePublisher::ImagePublisher(QQuickItem *parent):
+ImagePublisher::ImagePublisher(QQuickItem* /* parent */):
     _active(true),
     _target(nullptr),
+    _topic("image"),
     _frame(""),
+    _latched(false),
     _width(0),
     _height(0),
     _pixel2meter(1),
-    _topic("image"),
-    _latched(false),
     _it(_node)
 {
 
@@ -398,17 +398,17 @@ sensor_msgs::CameraInfo ImagePublisher::makeCameraInfo(const sensor_msgs::Image&
     // Don't let distorsion matrix be empty
     cam_info_msg.D.resize(5, 0.0);
     // Give a reasonable default intrinsic camera matrix
-    cam_info_msg.K = {1./_pixel2meter, 0.0,             img.width/2.0, 
-                      0.0,             1./_pixel2meter, img.height/2.0, 
-                      0.0,             0.0,             1.0};
+    cam_info_msg.K = {{1./_pixel2meter, 0.0,             img.width/2.0, 
+                       0.0,             1./_pixel2meter, img.height/2.0, 
+                       0.0,             0.0,             1.0}};
     // Give a reasonable default rectification matrix
-    cam_info_msg.R = {1.0, 0.0, 0.0,
-                      0.0, 1.0, 0.0,
-                      0.0, 0.0, 1.0};
+    cam_info_msg.R = {{1.0, 0.0, 0.0,
+                       0.0, 1.0, 0.0,
+                       0.0, 0.0, 1.0}};
     // Give a reasonable default projection matrix
-    cam_info_msg.P = {1./_pixel2meter, 0.0,             img.width/2.0,  0.0,
-                      0.0,             1./_pixel2meter, img.height/2.0, 0.0,
-                      0.0,             0.0,             1.0,            0.0};
+    cam_info_msg.P = {{1./_pixel2meter, 0.0,             img.width/2.0,  0.0,
+                       0.0,             1./_pixel2meter, img.height/2.0, 0.0,
+                       0.0,             0.0,             1.0,            0.0}};
     return cam_info_msg;
 }
 
@@ -496,7 +496,7 @@ void ImagePublisher::_rospublish(const QImage& image)
 
 const QString FootprintsPublisher::topic = "footprints";
 
-FootprintsPublisher::FootprintsPublisher(QQuickItem *parent):
+FootprintsPublisher::FootprintsPublisher(QQuickItem* /* parent */):
     _pixel2meter(1),
     _publisher(_node.advertise<visualization_msgs::MarkerArray>(topic.toStdString(), 1, true))
 {
@@ -583,7 +583,7 @@ void RosSignal::setTopic(QString topic)
     _topic = topic;
 }
 
-void RosSignal::onIncomingSignal(const std_msgs::Empty emp)
+void RosSignal::onIncomingSignal(const std_msgs::Empty /* msg */)
 {
     emit triggered();
 }
