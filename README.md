@@ -34,7 +34,9 @@ making it available to any QML application.
 Known Issue
 -----------
 
-Ros has a known error in the pc files, lib are specified as -l:/path/libname.so. So the "-l:" should be removed. This can be done by updating the pc files in ros:
+ROS has a known error in its `pkgconfig` files (`.pc`) as libs dependencies are
+specified as `-l:/path/libname.so`: `-l:` should be removed. This can be done by
+updating the `.pc` files in ROS:
 
 ```
 > cd /opt/ros/kinetic/lib/pkgconfig/
