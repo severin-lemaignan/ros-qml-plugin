@@ -18,7 +18,7 @@ When used in conjunction with QML `Box2D` plugin, it can also publish the
 Requirements
 ------------
 
-- `qt5`
+- `qt5`. On Debian/Ubuntu: `apt install qmake qt5-default qtdeclarative5-dev`
 - ROS (tested with ROS kinectic, but should work with other versions as well)
 
 Installation
