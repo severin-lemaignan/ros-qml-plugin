@@ -1,20 +1,6 @@
 ROS QML plugin
 ==============
 
-Supports:
-
-- [publishing the pose of QML items](#tfbroadcaster) as TF frames
-- [subscribing to TF frames](#tflistener) to update the pose of QML items
-- [subscribe](#rospose)/publish ROS poses to move a QML item
-- [publishing QML items as ROS images](#imagepublisher)
-- [displaying a ROS image topic](#displaying-ros-image-topics)
-- bi-directional event signaling (``RosSignal``) by sending an `Empty` message on a specfic topic
-- publish (``RosStringPublisher``)/subscribe (``RosStringSubscriber``) to a string topic and trigger event when a string is received.
-
-
-When used in conjunction with QML `Box2D` plugin, it can also publish the
-(Box2D) bounding boxes of items as polygons.
-
 Requirements
 ------------
 
@@ -127,10 +113,27 @@ Window {
 As usual, you need a `roscore` running on your system.
 
 
+Supported ROS features
+----------------------
+
+Supports:
+
+- [publishing the pose of QML items](#tfbroadcaster) as TF frames
+- [subscribing to TF frames](#tflistener) to update the pose of QML items
+- [subscribe](#rospose)/publish ROS poses to move a QML item
+- [publishing QML items as ROS images](#imagepublisher)
+- [displaying a ROS image topic](#displaying-ros-image-topics)
+- bi-directional event signaling (``RosSignal``) by sending an `Empty` message
+  on a specfic topic
+- publish (``RosStringPublisher``)/subscribe (``RosStringSubscriber``) to a
+  string topic and trigger event when a string is received (see publisher
+  example above).
 
 
-ImagePublisher
---------------
+When used in conjunction with QML `Box2D` plugin, it can also publish the
+(Box2D) bounding boxes of items as polygons.
+
+### ImagePublisher
 
 You can publish the content of any QML image as a ROS image using the
 ``ImagePublisher`` object.
@@ -211,8 +214,7 @@ Image {
 }
 ```
 
-Displaying ROS image topics
----------------------------
+### Displaying ROS image topics
 
 This uses a special QML ``ImageProvider`` to read images from a ROS topic. Specify the topic using: `img.source = "image://rosimage/<your topic>"`.
 
@@ -237,8 +239,7 @@ Image {
 }
 ```
 
-TFBroadcaster
--------------
+### TFBroadcaster
 
 Publishes the position (x,y,theta) of a QML item as a TF frame. Pixel to meters conversion
 is controlled by the ``pixelscale`` parameter.
@@ -258,12 +259,12 @@ Item {
 }
 ```
 
-TFListener
-----------
+### TFListener
 
+(no documentation yet, please check the source code if necessary, or open an
+issue)
 
-RosPose
--------
+### RosPose
 
 `RosPose` is a QML item whose position can be updated from a ROS `Pose` message.
 
