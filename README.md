@@ -19,7 +19,14 @@ Requirements
 ------------
 
 - `qt5`. On Debian/Ubuntu: `apt install qmake qt5-default qtdeclarative5-dev`
-- ROS (tested with ROS kinectic, but should work with other versions as well)
+- ROS (tested with ROS kinectic and noetic, but should work with other versions as well). Required ROS packages are:
+    - `ros-<distrib>-roscpp`
+    - `ros-<distrib>-tf`
+    - `ros-<distrib>-image-transport`
+    - `ros-<distrib>-visualization-msgs`
+
+*Note that this has only been tested on Linux, and would likely require
+significant work to get it to work on a different operating system.*
 
 Installation
 ------------
@@ -35,7 +42,7 @@ making it available to any QML application.
 > make install
 ```
 
-### Known Issue
+### Known Issue for ROS Kinetic
 
 ROS has a known error in its `pkgconfig` files (`.pc`) as libs dependencies are
 specified as `-l:/path/libname.so`: `-l:` should be removed. This can be done by
@@ -49,23 +56,84 @@ updating the `.pc` files in ROS:
 General Usage
 -------------
 
-Call `ros::init` in your `main.cpp`:
+**Important: always launch QtCreator from the command-line! otherwise, your ROS
+configuration will not be set up, and QtCreator won't find the ROS libraries.**
+
+1. Add the required dependency to your project's `.pro`:
+
+```
+CONFIG += qt plugin nostrip link_pkgconfig
+PKGCONFIG += roscpp tf image_transport visualization_msgs
+```
+
+2. Call `ros::init` in your `main.cpp`:
 
 ```cpp
-//...
+//...qt headers
 #include <ros/ros.h>
 
 int main(int argc, char *argv[])
 {
     ros::init(argc, argv,"your_node_name");
 
+    // rest of your Qt application, like...
     QGuiApplication app(argc, argv);
 
     //...
 }
 ```
 
-Then, in your QML files:
+3. Then, in your QML files, import `Ros 1.0`:
+
+```qml
+
+import Ros 1.0
+```
+
+### Working 'Hello World' example
+
+This example creates a blank window. If you click anywhere onto the window, the
+string `Hello world` is published on the topic `/hello`:
+
+```qml
+import QtQuick 2.12
+import QtQuick.Window 2.12
+
+import Ros 1.0
+
+Window {
+    visible: true
+    width: 640
+    height: 480
+    title: qsTr("Hello World")
+
+    RosStringPublisher{
+        id: hello_publisher
+        topic: "hello"
+
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        onClicked: {
+            hello_publisher.text = "Hello world"
+        }
+
+    }
+
+}
+```
+
+As usual, you need a `roscore` running on your system.
+
+
+
+
+ImagePublisher
+--------------
+
+You can publish the content of any QML image as a ROS image using the
+``ImagePublisher`` object.
 
 ```qml
 
@@ -103,11 +171,7 @@ Item {
 ```
 
 
-ImagePublisher
---------------
 
-You can publish the content of any QML image as a ROS image using the
-``ImagePublisher`` object.
 
 The ImagePublisher class provides a QML object that publishes a QImage on a
 ROS topic (set it with the 'topic' property).
@@ -231,3 +295,14 @@ Window {
 ```
 
 You can as well use `onPositionChanged` to react to position changes.
+
+Troubleshooting
+---------------
+
+### Error: roscpp development package not found
+
+You need to launch QtCreator from the command-line for your ROS environment to
+be properly setup.
+
+
+*If you encounter other issues, please open an issue in the issue tracker.*
