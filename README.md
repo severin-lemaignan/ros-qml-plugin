@@ -1,15 +1,13 @@
-ROS QML plugin
-==============
+ROS 2 QML plugin
+================
+
+![Screenshot of the sample app](doc/screenshot-sample-app.png)
 
 Requirements
 ------------
 
 - `qt5`. On Debian/Ubuntu: `apt install qmake qt5-default qtdeclarative5-dev`
-- ROS (tested with ROS kinectic and noetic, but should work with other versions as well). Required ROS packages are:
-    - `ros-<distrib>-roscpp`
-    - `ros-<distrib>-tf`
-    - `ros-<distrib>-image-transport`
-    - `ros-<distrib>-visualization-msgs`
+- ROS (tested with ROS humble. Check the `master` branch for kinectic and noetic support).
 
 *Note that this has only been tested on Linux, and would likely require
 significant work to get it to work on a different operating system.*
@@ -17,26 +15,15 @@ significant work to get it to work on a different operating system.*
 Installation
 ------------
 
-The following commands compile and install the QML plugin in the QML dir,
-making it available to any QML application.
+You can install the plugin as any ROS 2 package, using `colcon`.
+If you then source your ROS 2 environment, any qml application will be able to
+use the plugin.
 
-```
-> mkdir build
-> cd build
-> qmake ..
-> make
-> make install
-```
+To compile:
 
-### Known Issue for ROS Kinetic
-
-ROS has a known error in its `pkgconfig` files (`.pc`) as libs dependencies are
-specified as `-l:/path/libname.so`: `-l:` should be removed. This can be done by
-updating the `.pc` files in ROS:
-
-```
-> cd /opt/ros/kinetic/lib/pkgconfig/
-> sudo sed -i "s/-l://g" *
+```bash
+> rosdep install --from-paths src --ignore-src -y # install dependencies
+> colcon build --packages-select ros_qml_plugin
 ```
 
 General Usage
@@ -45,35 +32,11 @@ General Usage
 **Important: always launch QtCreator from the command-line! otherwise, your ROS
 configuration will not be set up, and QtCreator won't find the ROS libraries.**
 
-1. Add the required dependency to your project's `.pro`:
-
-```
-CONFIG += qt plugin nostrip link_pkgconfig
-PKGCONFIG += roscpp tf image_transport visualization_msgs
-```
-
-2. Call `ros::init` in your `main.cpp`:
-
-```cpp
-//...qt headers
-#include <ros/ros.h>
-
-int main(int argc, char *argv[])
-{
-    ros::init(argc, argv,"your_node_name");
-
-    // rest of your Qt application, like...
-    QGuiApplication app(argc, argv);
-
-    //...
-}
-```
-
-3. Then, in your QML files, import `Ros 1.0`:
+In your QML files, import `Ros 2.0`:
 
 ```qml
 
-import Ros 1.0
+import Ros 2.0
 ```
 
 ### Working 'Hello World' example
@@ -115,6 +78,10 @@ As usual, you need a `roscore` running on your system.
 
 Supported ROS features
 ----------------------
+
+Check [sample.qml](examples/sample.qml) for a complete example.
+You can actually test it by running `qmlscene examples/sample.qml` (cf
+screenshot above).
 
 Supports:
 
@@ -307,3 +274,12 @@ be properly setup.
 
 
 *If you encounter other issues, please open an issue in the issue tracker.*
+
+
+Similar projects
+----------------
+
+- https://github.com/StefanFabian/qml_ros2_plugin: similar project, with a focus
+  on lower-level access to ROS 2 topics, actions, services. More generic, but
+  slightly more complex to use.
+
