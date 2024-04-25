@@ -33,8 +33,23 @@ RosImageProvider::RosImageProvider()
 void RosImageProvider::imageCallback(
   const sensor_msgs::msg::Image::ConstSharedPtr & msg)
 {
+  if (msg->encoding == "rgb8") {
+    _last_image = QImage(msg->width, msg->height, QImage::Format_RGB888);
+  } else if (msg->encoding == "bgr8") {
+    _last_image = QImage(msg->width, msg->height, QImage::Format_BGR888);
+  } else if (msg->encoding == "rgba8") {
+    _last_image = QImage(msg->width, msg->height, QImage::Format_RGBA8888);
+  } else if (msg->encoding == "mono8") {
+    _last_image = QImage(msg->width, msg->height, QImage::Format_Grayscale8);
 
-  _last_image = QImage(msg->width, msg->height, QImage::Format_RGB888);
+  } else if (msg->encoding == "mono16") {
+    _last_image = QImage(msg->width, msg->height, QImage::Format_Grayscale16);
+  } else {
+    std::cerr << "Unsupported image encoding: " << msg->encoding
+              << " (supported: rgb8, bgr8, rgba8, mono8, mono16)" << std::endl;
+    return;
+  }
+
   memcpy(_last_image.bits(), msg->data.data(), _last_image.sizeInBytes());
 }
 
