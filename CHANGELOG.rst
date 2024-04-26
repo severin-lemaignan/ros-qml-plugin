@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.0.0 (2024-04-26)
+------------------
 * bump version in prep of first ROS2 release
 * add dep on ament_cmake_auto
 * handle more image formats
