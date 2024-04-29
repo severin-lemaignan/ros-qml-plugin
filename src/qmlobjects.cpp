@@ -133,8 +133,9 @@ const double EPSILON = 0.5;
 
 void RosStringSubscriber::onIncomingString(const std_msgs::msg::String & str)
 {
-  _text = QString::fromStdString(str.data);
-  emit onTextChanged();
+
+  // std::cout << "Received string: " << str.data << std::endl;
+  setProperty("text", QString::fromStdString(str.data));
 }
 
 void RosStringSubscriber::setTopic(QString topic)
