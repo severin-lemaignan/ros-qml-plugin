@@ -2,6 +2,17 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [doc] update README to reflect what the plugin can actually do
+* create a generic RosTopic class
+  + expose IntTopic, FloatTopic, BoolTopic, String topic
+  Remove (now useless) RosStringPublisher/Subscriber
+* add a RosTopicInt publisher/subscriber
+* add a RosParam qml object to set/get ROS2 parameters on the current node
+* minor Qt styling change
+* Contributors: Séverin Lemaignan
+
 2.0.0 (2024-04-26)
 ------------------
 * bump version in prep of first ROS2 release
