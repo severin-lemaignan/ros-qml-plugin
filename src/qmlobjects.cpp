@@ -355,6 +355,65 @@ void RosParam::onRemoteParameterEvent(
     }
   }
 }
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+
+void RosTopicInt::onIncomingData(const RosTopicInt::DataType &data) {
+
+  // std::cout << "Received string: " << str.data << std::endl;
+  auto value = QVariant::fromValue(data.data);
+
+  if (value != _value) {
+    _value = value;
+    emit onValueChanged();
+  }
+
+  // always emit the signal to signal a message has been published, even if the
+  // value did not change
+  emit messageReceived();
+}
+
+void RosTopicInt::setTopic(const QString &topic) {
+  if (topic == _topic) {
+    return;
+  }
+
+  std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+
+  _subscriber = node->create_subscription<RosTopicInt::DataType>(
+      topic.toStdString(), 1,
+      std::bind(&RosTopicInt::onIncomingData, this, _1));
+
+  _publisher =
+      node->create_publisher<RosTopicInt::DataType>(topic.toStdString(), 1);
+
+  _topic = topic;
+}
+
+void RosTopicInt::setValue(const QVariant &value) {
+
+  if (value == _value) {
+    return;
+  }
+
+  _value = value;
+  publish();
+}
+
+void RosTopicInt::publish() {
+
+  if (std::string(_publisher->get_topic_name()).empty()) {
+    std::cerr << "RosTopicInt.publish() called without any topic." << std::endl;
+    return;
+  }
+
+  RosTopicInt::DataType message;
+  message.data = _value.value<decltype(RosTopicInt::DataType::data)>();
+
+  std::cout << "Publishing " << message.data << std::endl;
+  _publisher->publish(message);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

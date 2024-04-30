@@ -37,6 +37,7 @@ public:
     qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
     qmlRegisterType<RosStringSubscriber>(uri, 2, 0, "RosStringSubscriber");
     qmlRegisterType<RosStringPublisher>(uri, 2, 0, "RosStringPublisher");
+    qmlRegisterType<RosTopicInt>(uri, 2, 0, "RosTopicInt");
     //  qmlRegisterType<TFListener>(uri, 2, 0, "TFListener");
     //  qmlRegisterType<TFBroadcaster>(uri, 2, 0, "TFBroadcaster");
     //  qmlRegisterType<FootprintsPublisher>(uri, 2, 0, "FootprintsPublisher");

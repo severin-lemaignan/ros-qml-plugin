@@ -31,6 +31,7 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/empty.hpp>
+#include <std_msgs/msg/int16.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
@@ -180,6 +181,40 @@ private:
   QString _name;
   QVariant _value;
   rclcpp::Node::SharedPtr _node;
+};
+
+/**
+ * @brief A QtQuick item that publish/subscribe to a ROS2 topic of type
+ * std_msgs/Int16.
+ */
+class RosTopicInt : public QObjectRos2 {
+  Q_OBJECT
+  Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
+  Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+
+  typedef std_msgs::msg::Int16 DataType;
+
+public:
+  RosTopicInt() {}
+
+  virtual ~RosTopicInt() {}
+
+  void setTopic(const QString &topic);
+  void setValue(const QVariant &value);
+  Q_INVOKABLE void publish();
+
+signals:
+  void onValueChanged();
+  void messageReceived();
+
+private:
+  void onIncomingData(const RosTopicInt::DataType &data);
+  QString _topic;
+  QVariant _value;
+
+  // ros::NodeHandle _node;
+  rclcpp::Publisher<RosTopicInt::DataType>::SharedPtr _publisher;
+  rclcpp::Subscription<RosTopicInt::DataType>::SharedPtr _subscriber;
 };
 
 /**
