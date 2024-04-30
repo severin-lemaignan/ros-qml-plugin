@@ -24,6 +24,11 @@
 #include "ros_qml_plugin/qmlobjects.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
+#include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/string.hpp>
+
 class RosPlugin : public QQmlExtensionPlugin {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
@@ -35,9 +40,12 @@ public:
     //  qmlRegisterType<RosPoseSubscriber>(uri, 2, 0, "RosPoseSubscriber");
     //  qmlRegisterType<RosPosePublisher>(uri, 2, 0, "RosPosePublisher");
     qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
-    qmlRegisterType<RosStringSubscriber>(uri, 2, 0, "RosStringSubscriber");
-    qmlRegisterType<RosStringPublisher>(uri, 2, 0, "RosStringPublisher");
-    qmlRegisterType<RosTopicInt>(uri, 2, 0, "RosTopicInt");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::String>>(uri, 2, 0,
+                                                         "StringTopic");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::Int16>>(uri, 2, 0, "IntTopic");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::Float32>>(uri, 2, 0,
+                                                          "FloatTopic");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::Bool>>(uri, 2, 0, "BoolTopic");
     //  qmlRegisterType<TFListener>(uri, 2, 0, "TFListener");
     //  qmlRegisterType<TFBroadcaster>(uri, 2, 0, "TFBroadcaster");
     //  qmlRegisterType<FootprintsPublisher>(uri, 2, 0, "FootprintsPublisher");

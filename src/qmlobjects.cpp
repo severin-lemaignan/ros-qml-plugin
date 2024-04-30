@@ -21,6 +21,10 @@
 #include <string>
 
 #include <geometry_msgs/msg/point.hpp>
+#include <std_msgs/msg/bool.hpp>
+#include <std_msgs/msg/float32.hpp>
+#include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
@@ -359,10 +363,16 @@ void RosParam::onRemoteParameterEvent(
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-void RosTopicInt::onIncomingData(const RosTopicInt::DataType &data) {
+template <typename T> void RosTopicImpl<T>::onIncomingData(const T &data) {
 
-  // std::cout << "Received string: " << str.data << std::endl;
-  auto value = QVariant::fromValue(data.data);
+  QVariant value;
+
+  // special case std::string, as they are not directly convertible to QVariant
+  if constexpr (std::is_same_v<T, std_msgs::msg::String>) {
+    value = QVariant::fromValue(QString::fromStdString(data.data));
+  } else {
+    value = QVariant::fromValue(data.data);
+  }
 
   if (value != _value) {
     _value = value;
@@ -374,24 +384,23 @@ void RosTopicInt::onIncomingData(const RosTopicInt::DataType &data) {
   emit messageReceived();
 }
 
-void RosTopicInt::setTopic(const QString &topic) {
+template <typename T> void RosTopicImpl<T>::setTopic(const QString &topic) {
   if (topic == _topic) {
     return;
   }
 
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
-  _subscriber = node->create_subscription<RosTopicInt::DataType>(
+  _subscriber = node->create_subscription<T>(
       topic.toStdString(), 1,
-      std::bind(&RosTopicInt::onIncomingData, this, _1));
+      std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
 
-  _publisher =
-      node->create_publisher<RosTopicInt::DataType>(topic.toStdString(), 1);
+  _publisher = node->create_publisher<T>(topic.toStdString(), 1);
 
   _topic = topic;
 }
 
-void RosTopicInt::setValue(const QVariant &value) {
+template <typename T> void RosTopicImpl<T>::setValue(const QVariant &value) {
 
   if (value == _value) {
     return;
@@ -401,75 +410,35 @@ void RosTopicInt::setValue(const QVariant &value) {
   publish();
 }
 
-void RosTopicInt::publish() {
+template <typename T> void RosTopicImpl<T>::publish() {
 
-  if (std::string(_publisher->get_topic_name()).empty()) {
-    std::cerr << "RosTopicInt.publish() called without any topic." << std::endl;
+  if (!_publisher) {
+    std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
     return;
   }
 
-  RosTopicInt::DataType message;
-  message.data = _value.value<decltype(RosTopicInt::DataType::data)>();
+  if (std::string(_publisher->get_topic_name()).empty()) {
+    std::cerr << "RosTopic.publish() called without any topic." << std::endl;
+    return;
+  }
 
-  std::cout << "Publishing " << message.data << std::endl;
+  T message;
+
+  // special case std::string, as they are not directly convertible from
+  // QVariant
+  if constexpr (std::is_same_v<T, std_msgs::msg::String>) {
+    message.data = _value.value<QString>().toStdString();
+  } else {
+    message.data = _value.value<decltype(T::data)>();
+  }
+
   _publisher->publish(message);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-void RosStringSubscriber::onIncomingString(const std_msgs::msg::String &str) {
-
-  // std::cout << "Received string: " << str.data << std::endl;
-  setProperty("text", QString::fromStdString(str.data));
-}
-
-void RosStringSubscriber::setTopic(QString topic) {
-  if (topic == _topic) {
-    return;
-  }
-
-  std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
-
-  _subscriber = node->create_subscription<std_msgs::msg::String>(
-      topic.toStdString(), 1,
-      std::bind(&RosStringSubscriber::onIncomingString, this, _1));
-
-  _topic = topic;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-void RosStringPublisher::setTopic(QString topic) {
-  if (topic == _topic) {
-    return;
-  }
-
-  std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
-  _publisher =
-      node->create_publisher<std_msgs::msg::String>(topic.toStdString(), 1);
-  _topic = topic;
-}
-
-void RosStringPublisher::setText(QString text) {
-  _text = text;
-  publish();
-}
-
-void RosStringPublisher::publish() {
-  if (std::string(_publisher->get_topic_name()).empty()) {
-    std::cerr << "RosStringPublisher.publish() called without any topic."
-              << std::endl;
-    return;
-  }
-
-  std_msgs::msg::String message;
-  message.data = _text.toStdString();
-
-  _publisher->publish(message);
-}
+template class RosTopicImpl<std_msgs::msg::Int16>;
+template class RosTopicImpl<std_msgs::msg::Float32>;
+template class RosTopicImpl<std_msgs::msg::Bool>;
+template class RosTopicImpl<std_msgs::msg::String>;
 
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

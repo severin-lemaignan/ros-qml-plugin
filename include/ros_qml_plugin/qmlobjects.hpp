@@ -31,7 +31,6 @@
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <std_msgs/msg/empty.hpp>
-#include <std_msgs/msg/int16.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
@@ -187,85 +186,43 @@ private:
  * @brief A QtQuick item that publish/subscribe to a ROS2 topic of type
  * std_msgs/Int16.
  */
-class RosTopicInt : public QObjectRos2 {
+class RosTopic : public QObjectRos2 {
   Q_OBJECT
   Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
 
-  typedef std_msgs::msg::Int16 DataType;
-
 public:
-  RosTopicInt() {}
+  RosTopic() {}
+  virtual ~RosTopic() {}
 
-  virtual ~RosTopicInt() {}
-
-  void setTopic(const QString &topic);
-  void setValue(const QVariant &value);
-  Q_INVOKABLE void publish();
+  virtual void setTopic(const QString &) = 0;
+  virtual void setValue(const QVariant &) = 0;
+  Q_INVOKABLE void publish() {}
 
 signals:
   void onValueChanged();
   void messageReceived();
 
-private:
-  void onIncomingData(const RosTopicInt::DataType &data);
+protected:
   QString _topic;
   QVariant _value;
-
-  // ros::NodeHandle _node;
-  rclcpp::Publisher<RosTopicInt::DataType>::SharedPtr _publisher;
-  rclcpp::Subscription<RosTopicInt::DataType>::SharedPtr _subscriber;
 };
 
-/**
- * @brief A QtQuick item that follows a ROS String published on a topic 'topic'.
- */
-class RosStringSubscriber : public QObjectRos2 {
-  Q_OBJECT
-  Q_PROPERTY(QString text MEMBER _text NOTIFY onTextChanged)
-  Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+template <typename T> class RosTopicImpl : public RosTopic {
 
 public:
-  RosStringSubscriber() {}
+  RosTopicImpl<T>() {}
+  virtual ~RosTopicImpl<T>() {}
 
-  virtual ~RosStringSubscriber() {}
-
-  void setTopic(QString topic);
-
-signals:
-  void onTextChanged();
-
-private:
-  void onIncomingString(const std_msgs::msg::String &str);
-  QString _topic;
-  QString _text;
-
-  // ros::NodeHandle _node;
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr _subscriber;
-};
-
-/**
- * @brief A QtQuick item that publish a ROS string on a topic 'topic'.
- *
- */
-class RosStringPublisher : public QObjectRos2 {
-  Q_OBJECT
-  Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
-  Q_PROPERTY(QString text WRITE setText MEMBER _text)
-
-public:
-  RosStringPublisher() {}
-  virtual ~RosStringPublisher() {}
-
-  void setTopic(QString topic);
-  void setText(QString text);
+  void setTopic(const QString &);
+  void setValue(const QVariant &);
   Q_INVOKABLE void publish();
 
 private:
-  QString _topic;
-  QString _text;
-  // ros::NodeHandle _node;
-  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr _publisher;
+  void onIncomingData(const T &data);
+
+  typename rclcpp::Publisher<T>::SharedPtr _publisher;
+  typename rclcpp::Subscription<T>::SharedPtr _subscriber;
 };
 
 //  /**
