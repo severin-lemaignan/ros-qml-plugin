@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.1.0 (2024-04-30)
+------------------
 * [doc] update README to reflect what the plugin can actually do
 * create a generic RosTopic class
   + expose IntTopic, FloatTopic, BoolTopic, String topic
