@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QQuickItem>
+#include <QVariant>
 #include <memory>
 #include <thread>
 
@@ -134,11 +135,57 @@
 //    rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr _publisher;
 //  };
 
+typedef rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr
+    ParameterEventSubscription;
+
+class RosParam : public QObjectRos2 {
+  Q_OBJECT
+  Q_PROPERTY(QString node MEMBER _target_node_name)
+  Q_PROPERTY(QString name MEMBER _name)
+  Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
+
+public:
+  RosParam();
+
+  virtual ~RosParam() {}
+
+  void setValue(QVariant value);
+
+  /**
+   * Configure the parameter service + callback
+   */
+  Q_INVOKABLE void ready();
+
+signals:
+  void onValueChanged();
+
+private:
+  // for local parameters
+  rcl_interfaces::msg::SetParametersResult
+  onLocalParameterEvent(const std::vector<rclcpp::Parameter> &parameters);
+
+  rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr _local_cb;
+
+  // for remote parameters
+  rclcpp::SyncParametersClient::SharedPtr _param_client;
+
+  void onRemoteParameterEvent(
+      const rcl_interfaces::msg::ParameterEvent::SharedPtr event);
+
+  ParameterEventSubscription _remote_cb;
+
+  //////////////////
+  bool _is_ready = false;
+  QString _target_node_name;
+  QString _name;
+  QVariant _value;
+  rclcpp::Node::SharedPtr _node;
+};
+
 /**
  * @brief A QtQuick item that follows a ROS String published on a topic 'topic'.
  */
-class RosStringSubscriber : public QObjectRos2
-{
+class RosStringSubscriber : public QObjectRos2 {
   Q_OBJECT
   Q_PROPERTY(QString text MEMBER _text NOTIFY onTextChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
@@ -149,12 +196,12 @@ public:
   virtual ~RosStringSubscriber() {}
 
   void setTopic(QString topic);
-  void onIncomingString(const std_msgs::msg::String & str);
 
 signals:
   void onTextChanged();
 
 private:
+  void onIncomingString(const std_msgs::msg::String &str);
   QString _topic;
   QString _text;
 
@@ -166,8 +213,7 @@ private:
  * @brief A QtQuick item that publish a ROS string on a topic 'topic'.
  *
  */
-class RosStringPublisher : public QObjectRos2
-{
+class RosStringPublisher : public QObjectRos2 {
   Q_OBJECT
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
   Q_PROPERTY(QString text WRITE setText MEMBER _text)
@@ -407,8 +453,7 @@ private:
  * configurable topic an empty message (ie, a signal) every time signal() is
  * called.
  */
-class RosSignal : public QObjectRos2
-{
+class RosSignal : public QObjectRos2 {
   Q_OBJECT
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
 
@@ -433,4 +478,4 @@ private:
   rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr _subscriber;
 };
 
-#endif  // ROS_QML_PLUGIN__QMLOBJECTS_HPP_
+#endif // ROS_QML_PLUGIN__QMLOBJECTS_HPP_

@@ -24,18 +24,17 @@
 #include "ros_qml_plugin/qmlobjects.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
-class RosPlugin : public QQmlExtensionPlugin
-{
+class RosPlugin : public QQmlExtensionPlugin {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
-  void registerTypes(const char * uri) override
-  {
+  void registerTypes(const char *uri) override {
     Q_ASSERT(uri == QLatin1String("Ros"));
 
     //  qmlRegisterType<RosPoseSubscriber>(uri, 2, 0, "RosPoseSubscriber");
     //  qmlRegisterType<RosPosePublisher>(uri, 2, 0, "RosPosePublisher");
+    qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
     qmlRegisterType<RosStringSubscriber>(uri, 2, 0, "RosStringSubscriber");
     qmlRegisterType<RosStringPublisher>(uri, 2, 0, "RosStringPublisher");
     //  qmlRegisterType<TFListener>(uri, 2, 0, "TFListener");
@@ -45,8 +44,7 @@ public:
     //  qmlRegisterType<ImagePublisher>(uri, 2, 0, "ImagePublisher");
   }
 
-  void initializeEngine(QQmlEngine * engine, const char * uri)
-  {
+  void initializeEngine(QQmlEngine *engine, const char *uri) {
     Q_UNUSED(uri);
 
     std::cout << "Initializing the ROS 2 node" << std::endl;
