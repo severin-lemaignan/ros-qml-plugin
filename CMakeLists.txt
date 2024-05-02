@@ -26,14 +26,18 @@ find_package(Qt5Multimedia REQUIRED)
 # note: it is *necessary* to include the .hpp in the list of source,
 # otherwise the moc will not be generated and the plugin will not be found
 set(SOURCES
+    include/ros_qml_plugin/qml_rosparam.hpp
+    src/qml_rosparam.cpp
+    include/ros_qml_plugin/qml_rostopic.hpp
+    src/qml_rostopic.cpp
+    include/ros_qml_plugin/qml_rossignal.hpp
+    src/qml_rossignal.cpp
     include/ros_qml_plugin/qobject_ros2.hpp
-    include/ros_qml_plugin/qmlobjects.hpp
     include/ros_qml_plugin/ros2.hpp
     src/rosplugin.cpp
     src/image_provider.cpp
     src/ros2.cpp
     src/qobject_ros2.cpp
-    src/qmlobjects.cpp
 )
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})

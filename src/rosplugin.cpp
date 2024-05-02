@@ -21,7 +21,9 @@
 #include <vector>
 
 #include "image_provider.hpp"
-#include "ros_qml_plugin/qmlobjects.hpp"
+#include "ros_qml_plugin/qml_rosparam.hpp"
+#include "ros_qml_plugin/qml_rossignal.hpp"
+#include "ros_qml_plugin/qml_rostopic.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
 #include <std_msgs/msg/bool.hpp>
@@ -37,8 +39,6 @@ public:
   void registerTypes(const char *uri) override {
     Q_ASSERT(uri == QLatin1String("Ros"));
 
-    //  qmlRegisterType<RosPoseSubscriber>(uri, 2, 0, "RosPoseSubscriber");
-    //  qmlRegisterType<RosPosePublisher>(uri, 2, 0, "RosPosePublisher");
     qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::String>>(uri, 2, 0,
                                                          "StringTopic");
@@ -46,11 +46,8 @@ public:
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Float32>>(uri, 2, 0,
                                                           "FloatTopic");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Bool>>(uri, 2, 0, "BoolTopic");
-    //  qmlRegisterType<TFListener>(uri, 2, 0, "TFListener");
-    //  qmlRegisterType<TFBroadcaster>(uri, 2, 0, "TFBroadcaster");
-    //  qmlRegisterType<FootprintsPublisher>(uri, 2, 0, "FootprintsPublisher");
+
     qmlRegisterType<RosSignal>(uri, 2, 0, "RosSignal");
-    //  qmlRegisterType<ImagePublisher>(uri, 2, 0, "ImagePublisher");
   }
 
   void initializeEngine(QQmlEngine *engine, const char *uri) {
