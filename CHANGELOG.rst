@@ -2,6 +2,13 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add subscriber/publisher for hri_msgs/Expression and hri_msgs/LiveSpeech
+* code layout refactoring
+  moved the different QML objects in their own cpp/hpp
+* Contributors: Séverin Lemaignan
+
 2.1.0 (2024-04-30)
 ------------------
 * [doc] update README to reflect what the plugin can actually do
