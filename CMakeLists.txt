@@ -50,12 +50,8 @@ ament_target_dependencies(
   ${PROJECT_NAME}
   rclcpp
   image_transport
-  sensor_msgs
   std_msgs
-  geometry_msgs
-  visualization_msgs
-  tf2
-  tf2_ros
+  hri_msgs
   Qt5Core
   Qt5Quick
   Qt5Qml

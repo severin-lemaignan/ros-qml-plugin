@@ -22,8 +22,6 @@
 #include <thread>
 
 #include <rclcpp/rclcpp.hpp>
-#include <std_msgs/msg/empty.hpp>
-#include <std_msgs/msg/string.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
 

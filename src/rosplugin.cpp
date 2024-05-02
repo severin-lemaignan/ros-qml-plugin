@@ -26,6 +26,8 @@
 #include "ros_qml_plugin/qml_rostopic.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
+#include <hri_msgs/msg/expression.hpp>
+#include <hri_msgs/msg/live_speech.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
@@ -46,6 +48,10 @@ public:
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Float32>>(uri, 2, 0,
                                                           "FloatTopic");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Bool>>(uri, 2, 0, "BoolTopic");
+    qmlRegisterType<RosTopicImpl<hri_msgs::msg::Expression>>(uri, 2, 0,
+                                                             "ExpressionTopic");
+    qmlRegisterType<RosTopicImpl<hri_msgs::msg::LiveSpeech>>(uri, 2, 0,
+                                                             "LiveSpeechTopic");
 
     qmlRegisterType<RosSignal>(uri, 2, 0, "RosSignal");
   }

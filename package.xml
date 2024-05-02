@@ -12,11 +12,7 @@
   <depend>image_transport</depend>
   <depend>rclcpp</depend>
   <depend>std_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>visualization_msgs</depend>
-  <depend>tf2</depend>
-  <depend>tf2_ros</depend>
+  <depend>hri_msgs</depend>
   <depend>libqt5-core</depend>
   <depend>libqt5-multimedia</depend>
   <depend>libqt5-qml</depend>
