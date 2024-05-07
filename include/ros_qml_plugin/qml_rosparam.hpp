@@ -26,9 +26,10 @@
 #include "ros_qml_plugin/qobject_ros2.hpp"
 
 typedef rclcpp::Subscription<rcl_interfaces::msg::ParameterEvent>::SharedPtr
-    ParameterEventSubscription;
+  ParameterEventSubscription;
 
-class RosParam : public QObjectRos2 {
+class RosParam : public QObjectRos2
+{
   Q_OBJECT
   Q_PROPERTY(QString node MEMBER _target_node_name)
   Q_PROPERTY(QString name MEMBER _name)
@@ -52,7 +53,7 @@ signals:
 private:
   // for local parameters
   rcl_interfaces::msg::SetParametersResult
-  onLocalParameterEvent(const std::vector<rclcpp::Parameter> &parameters);
+  onLocalParameterEvent(const std::vector<rclcpp::Parameter> & parameters);
 
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr _local_cb;
 
@@ -60,7 +61,7 @@ private:
   rclcpp::SyncParametersClient::SharedPtr _param_client;
 
   void onRemoteParameterEvent(
-      const rcl_interfaces::msg::ParameterEvent::SharedPtr event);
+    const rcl_interfaces::msg::ParameterEvent::SharedPtr event);
 
   ParameterEventSubscription _remote_cb;
 

@@ -29,7 +29,8 @@
  * @brief A QtQuick item that publish/subscribe to a ROS2 topic of type
  * std_msgs/Int16.
  */
-class RosTopic : public QObjectRos2 {
+class RosTopic : public QObjectRos2
+{
   Q_OBJECT
   Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
@@ -51,7 +52,9 @@ protected:
   QVariant _value;
 };
 
-template <typename T> class RosTopicImpl : public RosTopic {
+template<typename T>
+class RosTopicImpl : public RosTopic
+{
 
 public:
   RosTopicImpl<T>() {}
@@ -62,7 +65,7 @@ public:
   Q_INVOKABLE void publish();
 
 private:
-  void onIncomingData(const T &data);
+  void onIncomingData(const T & data);
 
   typename rclcpp::Publisher<T>::SharedPtr _publisher;
   typename rclcpp::Subscription<T>::SharedPtr _subscriber;

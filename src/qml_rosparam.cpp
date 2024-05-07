@@ -18,9 +18,10 @@
 using std::placeholders::_1;
 using namespace std::chrono_literals;
 
-RosParam::RosParam() { _node = Ros2Qml::getInstance().node(); }
+RosParam::RosParam() {_node = Ros2Qml::getInstance().node();}
 
-void RosParam::setValue(QVariant value) {
+void RosParam::setValue(QVariant value)
+{
 
   if (value == _value) {
     return;
@@ -30,7 +31,7 @@ void RosParam::setValue(QVariant value) {
 
   if (!_is_ready) {
     std::cerr << "Parameter service not ready; have you called ready() in "
-                 "Component.onCompleted?"
+      "Component.onCompleted?"
               << std::endl;
     return;
   }
@@ -48,24 +49,26 @@ void RosParam::setValue(QVariant value) {
 
   std::shared_ptr<rclcpp::Parameter> parameter;
   switch (value.type()) {
-  case QVariant::Bool:
-    parameter = std::make_shared<rclcpp::Parameter>(_name.toStdString(),
-                                                    value.toBool());
-    break;
-  case QVariant::Int:
-    parameter =
+    case QVariant::Bool:
+      parameter = std::make_shared<rclcpp::Parameter>(
+        _name.toStdString(),
+        value.toBool());
+      break;
+    case QVariant::Int:
+      parameter =
         std::make_shared<rclcpp::Parameter>(_name.toStdString(), value.toInt());
-    break;
-  case QVariant::Double:
-    parameter = std::make_shared<rclcpp::Parameter>(_name.toStdString(),
-                                                    value.toDouble());
-    break;
-  case QVariant::String:
-    parameter = std::make_shared<rclcpp::Parameter>(
+      break;
+    case QVariant::Double:
+      parameter = std::make_shared<rclcpp::Parameter>(
+        _name.toStdString(),
+        value.toDouble());
+      break;
+    case QVariant::String:
+      parameter = std::make_shared<rclcpp::Parameter>(
         _name.toStdString(), value.toString().toStdString());
-    break;
-  default:
-    std::cerr << "Unsupported type for parameter value" << std::endl;
+      break;
+    default:
+      std::cerr << "Unsupported type for parameter value" << std::endl;
   }
 
   if (parameter) {
@@ -77,7 +80,8 @@ void RosParam::setValue(QVariant value) {
   }
 }
 
-void RosParam::ready() {
+void RosParam::ready()
+{
 
   if (_name.isEmpty()) {
     std::cerr << "Cannot configure a parameter without a name" << std::endl;
@@ -85,7 +89,7 @@ void RosParam::ready() {
   }
   if (!_value.isValid()) {
     std::cerr << "Cannot configure a parameter without a type; set 'value' to "
-                 "a default value"
+      "a default value"
               << std::endl;
     return;
   }
@@ -100,7 +104,7 @@ void RosParam::ready() {
       std::cout << "Creating new parameter client for node "
                 << _target_node_name.toStdString() << std::endl;
       _param_client = std::make_shared<rclcpp::SyncParametersClient>(
-          _node, _target_node_name.toStdString());
+        _node, _target_node_name.toStdString());
     }
 
     if (!_param_client->service_is_ready()) {
@@ -114,38 +118,40 @@ void RosParam::ready() {
 
     // add callback to update the value when the parameter changes
     _remote_cb = _param_client->on_parameter_event(
-        std::bind(&RosParam::onRemoteParameterEvent, this, _1));
+      std::bind(&RosParam::onRemoteParameterEvent, this, _1));
   } else {
     ///////////////////////////////////////////////////////////////////////////
     // LOCAL PARAMETER
 
     _local_cb = _node->add_on_set_parameters_callback(
-        std::bind(&RosParam::onLocalParameterEvent, this, _1));
+      std::bind(&RosParam::onLocalParameterEvent, this, _1));
 
     QVariant updated_value = _value;
 
     if (_value.isValid()) {
 
       switch (_value.type()) {
-      case QVariant::Bool:
-        updated_value = QVariant::fromValue(
+        case QVariant::Bool:
+          updated_value = QVariant::fromValue(
             _node->declare_parameter(_name.toStdString(), _value.toBool()));
-        break;
-      case QVariant::Int:
-        updated_value = QVariant::fromValue(
+          break;
+        case QVariant::Int:
+          updated_value = QVariant::fromValue(
             _node->declare_parameter(_name.toStdString(), _value.toInt()));
-        break;
-      case QVariant::Double:
-        updated_value = QVariant::fromValue(
+          break;
+        case QVariant::Double:
+          updated_value = QVariant::fromValue(
             _node->declare_parameter(_name.toStdString(), _value.toDouble()));
-        break;
-      case QVariant::String:
-        updated_value =
-            QVariant::fromValue(QString::fromStdString(_node->declare_parameter(
+          break;
+        case QVariant::String:
+          updated_value =
+            QVariant::fromValue(
+            QString::fromStdString(
+              _node->declare_parameter(
                 _name.toStdString(), _value.toString().toStdString())));
-        break;
-      default:
-        std::cerr << "Unsupported type for parameter value" << std::endl;
+          break;
+        default:
+          std::cerr << "Unsupported type for parameter value" << std::endl;
       }
     } else {
       std::cerr << "Need to specify an initial value for parameter "
@@ -166,34 +172,35 @@ void RosParam::ready() {
 }
 
 rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(
-    const std::vector<rclcpp::Parameter> &parameters) {
+  const std::vector<rclcpp::Parameter> & parameters)
+{
 
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
 
   QVariant value = _value;
 
-  for (const auto &parameter : parameters) {
+  for (const auto & parameter : parameters) {
     if (parameter.get_name() == _name.toStdString()) {
 
       switch (parameter.get_type()) {
-      case rclcpp::ParameterType::PARAMETER_BOOL:
-        value = QVariant::fromValue(parameter.get_value<bool>());
-        break;
-      case rclcpp::ParameterType::PARAMETER_INTEGER:
-        value = QVariant::fromValue(parameter.get_value<int>());
-        break;
-      case rclcpp::ParameterType::PARAMETER_DOUBLE:
-        value = QVariant::fromValue(parameter.get_value<double>());
-        break;
-      case rclcpp::ParameterType::PARAMETER_STRING:
-        value = QVariant::fromValue(
+        case rclcpp::ParameterType::PARAMETER_BOOL:
+          value = QVariant::fromValue(parameter.get_value<bool>());
+          break;
+        case rclcpp::ParameterType::PARAMETER_INTEGER:
+          value = QVariant::fromValue(parameter.get_value<int>());
+          break;
+        case rclcpp::ParameterType::PARAMETER_DOUBLE:
+          value = QVariant::fromValue(parameter.get_value<double>());
+          break;
+        case rclcpp::ParameterType::PARAMETER_STRING:
+          value = QVariant::fromValue(
             QString::fromStdString(parameter.get_value<std::string>()));
-        break;
-      default:
-        std::cerr << "Unsupported type " << parameter.get_type_name()
-                  << " for ROS2 parameter " << parameter.get_name()
-                  << std::endl;
+          break;
+        default:
+          std::cerr << "Unsupported type " << parameter.get_type_name()
+                    << " for ROS2 parameter " << parameter.get_name()
+                    << std::endl;
       }
 
       if (value != _value) {
@@ -207,30 +214,31 @@ rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(
 }
 
 void RosParam::onRemoteParameterEvent(
-    const rcl_interfaces::msg::ParameterEvent::SharedPtr event) {
+  const rcl_interfaces::msg::ParameterEvent::SharedPtr event)
+{
 
   QVariant value = _value;
 
-  for (const auto &p : event->changed_parameters) {
+  for (const auto & p : event->changed_parameters) {
     if (p.name == _name.toStdString()) {
       switch (p.value.type) {
-      case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL:
-        value = QVariant::fromValue(p.value.bool_value);
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER:
-        value = QVariant::fromValue(p.value.integer_value);
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE:
-        value = QVariant::fromValue(p.value.double_value);
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
-        value =
+        case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL:
+          value = QVariant::fromValue(p.value.bool_value);
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER:
+          value = QVariant::fromValue(p.value.integer_value);
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE:
+          value = QVariant::fromValue(p.value.double_value);
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
+          value =
             QVariant::fromValue(QString::fromStdString(p.value.string_value));
-        break;
-      default:
-        std::cerr << "Unsupported type " << p.value.type
-                  << " for ROS2 parameter " << p.name << " of node "
-                  << _target_node_name.toStdString() << std::endl;
+          break;
+        default:
+          std::cerr << "Unsupported type " << p.value.type
+                    << " for ROS2 parameter " << p.name << " of node "
+                    << _target_node_name.toStdString() << std::endl;
       }
       if (value != _value) {
         _value = value;

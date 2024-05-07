@@ -25,9 +25,10 @@
 using std::placeholders::_1;
 
 // specialization for hri_msgs::msg::Expression
-template <>
+template<>
 void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
-    const hri_msgs::msg::Expression &data) {
+  const hri_msgs::msg::Expression & data)
+{
 
   QVariant value = QVariant::fromValue(QString::fromStdString(data.expression));
 
@@ -42,12 +43,13 @@ void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
 }
 
 // specialization for hri_msgs::msg::LiveSpeech
-template <>
+template<>
 void RosTopicImpl<hri_msgs::msg::LiveSpeech>::onIncomingData(
-    const hri_msgs::msg::LiveSpeech &data) {
+  const hri_msgs::msg::LiveSpeech & data)
+{
 
   QVariant value =
-      QVariant::fromValue(QString::fromStdString(data.incremental));
+    QVariant::fromValue(QString::fromStdString(data.incremental));
 
   if (value != _value) {
     _value = value;
@@ -59,7 +61,8 @@ void RosTopicImpl<hri_msgs::msg::LiveSpeech>::onIncomingData(
   emit messageReceived();
 }
 
-template <typename T> void RosTopicImpl<T>::onIncomingData(const T &data) {
+template<typename T> void RosTopicImpl<T>::onIncomingData(const T & data)
+{
 
   QVariant value;
 
@@ -80,7 +83,8 @@ template <typename T> void RosTopicImpl<T>::onIncomingData(const T &data) {
   emit messageReceived();
 }
 
-template <typename T> void RosTopicImpl<T>::setTopic(const QString &topic) {
+template<typename T> void RosTopicImpl<T>::setTopic(const QString & topic)
+{
   if (topic == _topic) {
     return;
   }
@@ -88,15 +92,16 @@ template <typename T> void RosTopicImpl<T>::setTopic(const QString &topic) {
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   _subscriber = node->create_subscription<T>(
-      topic.toStdString(), 1,
-      std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
+    topic.toStdString(), 1,
+    std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
 
   _publisher = node->create_publisher<T>(topic.toStdString(), 1);
 
   _topic = topic;
 }
 
-template <typename T> void RosTopicImpl<T>::setValue(const QVariant &value) {
+template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
+{
 
   if (value == _value) {
     return;
@@ -106,7 +111,8 @@ template <typename T> void RosTopicImpl<T>::setValue(const QVariant &value) {
   publish();
 }
 
-template <> void RosTopicImpl<hri_msgs::msg::Expression>::publish() {
+template<> void RosTopicImpl<hri_msgs::msg::Expression>::publish()
+{
 
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
@@ -124,7 +130,8 @@ template <> void RosTopicImpl<hri_msgs::msg::Expression>::publish() {
   _publisher->publish(message);
 }
 
-template <> void RosTopicImpl<hri_msgs::msg::LiveSpeech>::publish() {
+template<> void RosTopicImpl<hri_msgs::msg::LiveSpeech>::publish()
+{
 
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
@@ -142,7 +149,8 @@ template <> void RosTopicImpl<hri_msgs::msg::LiveSpeech>::publish() {
   _publisher->publish(message);
 }
 
-template <typename T> void RosTopicImpl<T>::publish() {
+template<typename T> void RosTopicImpl<T>::publish()
+{
 
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;

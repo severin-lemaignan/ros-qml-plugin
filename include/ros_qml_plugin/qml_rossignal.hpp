@@ -31,7 +31,8 @@
  * configurable topic an empty message (ie, a signal) every time signal() is
  * called.
  */
-class RosSignal : public QObjectRos2 {
+class RosSignal : public QObjectRos2
+{
   Q_OBJECT
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
 

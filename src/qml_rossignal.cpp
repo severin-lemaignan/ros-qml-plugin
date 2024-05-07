@@ -17,7 +17,8 @@
 
 using std::placeholders::_1;
 
-void RosSignal::setTopic(QString topic) {
+void RosSignal::setTopic(QString topic)
+{
 
   if (topic == _topic) {
     return;
@@ -26,20 +27,22 @@ void RosSignal::setTopic(QString topic) {
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   _subscriber = node->create_subscription<std_msgs::msg::Empty>(
-      topic.toStdString(), 1,
-      std::bind(&RosSignal::onIncomingSignal, this, _1));
+    topic.toStdString(), 1,
+    std::bind(&RosSignal::onIncomingSignal, this, _1));
 
   _publisher =
-      node->create_publisher<std_msgs::msg::Empty>(topic.toStdString(), 1);
+    node->create_publisher<std_msgs::msg::Empty>(topic.toStdString(), 1);
 
   _topic = topic;
 }
 
-void RosSignal::onIncomingSignal(const std_msgs::msg::Empty /* msg */) {
+void RosSignal::onIncomingSignal(const std_msgs::msg::Empty /* msg */)
+{
   emit triggered();
 }
 
-void RosSignal::signal() {
+void RosSignal::signal()
+{
   if (std::string(_publisher->get_topic_name()).empty()) {
     std::cerr << "RosSignal.signal() called without any topic." << std::endl;
     return;
