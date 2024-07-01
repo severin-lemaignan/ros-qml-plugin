@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [linter] run ament_uncrustify
+* Contributors: Séverin Lemaignan
+
 2.2.0 (2024-05-02)
 ------------------
 * add subscriber/publisher for hri_msgs/Expression and hri_msgs/LiveSpeech
