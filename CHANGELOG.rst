@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.2.1 (2024-07-01)
+------------------
 * [linter] run ament_uncrustify
 * Contributors: Séverin Lemaignan
 
