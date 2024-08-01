@@ -80,7 +80,7 @@ void RosParam::setValue(QVariant value)
   }
 }
 
-void RosParam::ready()
+void RosParam::onRos2Initialized()
 {
 
   if (_name.isEmpty()) {
@@ -99,11 +99,18 @@ void RosParam::ready()
   if (remote_parameter) {
     ///////////////////////////////////////////////////////////////////////////
     // REMOTE PARAMETER
+    //
+    if (!Ros2Qml::getInstance().isInitialized()) {
+      std::cerr
+        << "ROS 2 not yet initialized! Cannot configure a remote parameter."
+        << std::endl;
+      return;
+    }
 
     if (!_param_client) {
       std::cout << "Creating new parameter client for node "
                 << _target_node_name.toStdString() << std::endl;
-      _param_client = std::make_shared<rclcpp::SyncParametersClient>(
+      _param_client = std::make_shared<rclcpp::AsyncParametersClient>(
         _node, _target_node_name.toStdString());
     }
 
@@ -166,9 +173,8 @@ void RosParam::ready()
       _value = updated_value;
       emit onValueChanged();
     }
-
-    _is_ready = true;
   }
+  _is_ready = true;
 }
 
 rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(

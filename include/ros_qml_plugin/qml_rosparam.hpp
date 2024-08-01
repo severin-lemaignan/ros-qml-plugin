@@ -42,10 +42,7 @@ public:
 
   void setValue(QVariant value);
 
-  /**
-   * Configure the parameter service + callback
-   */
-  Q_INVOKABLE void ready();
+  void onRos2Initialized();
 
 signals:
   void onValueChanged();
@@ -58,7 +55,7 @@ private:
   rclcpp::node_interfaces::OnSetParametersCallbackHandle::SharedPtr _local_cb;
 
   // for remote parameters
-  rclcpp::SyncParametersClient::SharedPtr _param_client;
+  rclcpp::AsyncParametersClient::SharedPtr _param_client;
 
   void onRemoteParameterEvent(
     const rcl_interfaces::msg::ParameterEvent::SharedPtr event);

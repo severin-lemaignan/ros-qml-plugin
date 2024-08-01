@@ -40,12 +40,12 @@ void Ros2Qml::init(const QString & name, const QStringList & argv, quint32)
     std::copy(string.begin(), string.end(), cargv[i]);
   }
   context_ = rclcpp::Context::make_shared();
-  context_->init(argc, cargv);  // TODO(upstream): init options
+  context_->init(argc, cargv); // TODO(upstream): init options
   rclcpp::NodeOptions node_options;
   node_options.context(context_);
   node_ = rclcpp::Node::make_shared(
     name.toStdString(),
-    node_options);    // TODO(upstream): namespace and init options
+    node_options);   // TODO(upstream): namespace and init options
 
   it_ = std::make_shared<image_transport::ImageTransport>(node_);
 
@@ -57,7 +57,6 @@ void Ros2Qml::init(const QString & name, const QStringList & argv, quint32)
   auto executor =
     rclcpp::executors::SingleThreadedExecutor::make_unique(executor_options);
   executor->add_node(node_);
-  emit initialized();
   for (int i = 0; i < argv.size(); ++i) {
     delete[] cargv[i];
   }
@@ -66,6 +65,8 @@ void Ros2Qml::init(const QString & name, const QStringList & argv, quint32)
   executor_thread_ =
     std::thread([executor = std::move(executor)]() {executor->spin();});
 
+  emit initialized();
+  std::cout << "ROS 2 initialized." << std::endl;
   // TODO(SLE): QML_ROS2_PLUGIN_DEBUG("QML Ros2 initialized.");
 }
 
