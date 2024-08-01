@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix remote parameter setting/reading
+* Contributors: Séverin Lemaignan
+
 2.3.0 (2024-08-01)
 ------------------
 * add hooks to configure QML2_IMPORT_PATH
