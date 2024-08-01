@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add hooks to configure QML2_IMPORT_PATH
+* Contributors: Séverin Lemaignan
+
 2.2.1 (2024-07-01)
 ------------------
 * [linter] run ament_uncrustify
