@@ -52,6 +52,7 @@ ament_target_dependencies(
   image_transport
   std_msgs
   hri_msgs
+  hri_actions_msgs
   Qt5Core
   Qt5Quick
   Qt5Qml

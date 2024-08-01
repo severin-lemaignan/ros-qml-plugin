@@ -26,44 +26,36 @@
 #include "ros_qml_plugin/qml_rostopic.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
+#include <hri_actions_msgs/msg/closed_caption.hpp>
 #include <hri_msgs/msg/expression.hpp>
-#include <hri_msgs/msg/live_speech.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
 #include <std_msgs/msg/string.hpp>
 
-class RosPlugin : public QQmlExtensionPlugin
-{
+class RosPlugin : public QQmlExtensionPlugin {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID QQmlExtensionInterface_iid)
 
 public:
-  void registerTypes(const char * uri) override
-  {
+  void registerTypes(const char *uri) override {
     Q_ASSERT(uri == QLatin1String("Ros"));
 
     qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
-    qmlRegisterType<RosTopicImpl<std_msgs::msg::String>>(
-      uri, 2, 0,
-      "StringTopic");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::String>>(uri, 2, 0,
+                                                         "StringTopic");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Int16>>(uri, 2, 0, "IntTopic");
-    qmlRegisterType<RosTopicImpl<std_msgs::msg::Float32>>(
-      uri, 2, 0,
-      "FloatTopic");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::Float32>>(uri, 2, 0,
+                                                          "FloatTopic");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Bool>>(uri, 2, 0, "BoolTopic");
-    qmlRegisterType<RosTopicImpl<hri_msgs::msg::Expression>>(
-      uri, 2, 0,
-      "ExpressionTopic");
-    qmlRegisterType<RosTopicImpl<hri_msgs::msg::LiveSpeech>>(
-      uri, 2, 0,
-      "LiveSpeechTopic");
+    qmlRegisterType<RosTopicImpl<hri_msgs::msg::Expression>>(uri, 2, 0,
+                                                             "ExpressionTopic");
+    qmlRegisterType<ClosedCaptionTopic>(uri, 2, 0, "ClosedCaptionTopic");
 
     qmlRegisterType<RosSignal>(uri, 2, 0, "RosSignal");
   }
 
-  void initializeEngine(QQmlEngine * engine, const char * uri)
-  {
+  void initializeEngine(QQmlEngine *engine, const char *uri) {
     Q_UNUSED(uri);
 
     std::cout << "Initializing the ROS 2 node" << std::endl;

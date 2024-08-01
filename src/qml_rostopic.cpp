@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <hri_actions_msgs/msg/closed_caption.hpp>
 #include <hri_msgs/msg/expression.hpp>
-#include <hri_msgs/msg/live_speech.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
@@ -25,10 +25,9 @@
 using std::placeholders::_1;
 
 // specialization for hri_msgs::msg::Expression
-template<>
+template <>
 void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
-  const hri_msgs::msg::Expression & data)
-{
+    const hri_msgs::msg::Expression &data) {
 
   QVariant value = QVariant::fromValue(QString::fromStdString(data.expression));
 
@@ -42,27 +41,32 @@ void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
   emit messageReceived();
 }
 
-// specialization for hri_msgs::msg::LiveSpeech
-template<>
-void RosTopicImpl<hri_msgs::msg::LiveSpeech>::onIncomingData(
-  const hri_msgs::msg::LiveSpeech & data)
-{
+// specialization for hri_actions_msgs::msg::ClosedCaption
+void ClosedCaptionTopic::onIncomingData(
+    const hri_actions_msgs::msg::ClosedCaption &data) {
 
-  QVariant value =
-    QVariant::fromValue(QString::fromStdString(data.incremental));
+  QVariant value = QVariant::fromValue(QString::fromStdString(data.text));
+  QString speaker_id = QString::fromStdString(data.speaker_id);
 
-  if (value != _value) {
+  if (value != _value || speaker_id != _speaker_id) {
     _value = value;
+    _speaker_id = speaker_id;
     emit onValueChanged();
   }
 
-  // always emit the signal to signal a message has been published, even if the
+  // always emit the signal to signal a message has been received, even if the
   // value did not change
   emit messageReceived();
 }
 
-template<typename T> void RosTopicImpl<T>::onIncomingData(const T & data)
-{
+// we need to instantiate the template for ClosedCaption, but we don't need to
+// implement the onIncomingData method here, as it is already implemented in the
+// ClosedCaptionTopic class
+template <>
+void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::onIncomingData(
+    const hri_actions_msgs::msg::ClosedCaption &){};
+
+template <typename T> void RosTopicImpl<T>::onIncomingData(const T &data) {
 
   QVariant value;
 
@@ -83,8 +87,7 @@ template<typename T> void RosTopicImpl<T>::onIncomingData(const T & data)
   emit messageReceived();
 }
 
-template<typename T> void RosTopicImpl<T>::setTopic(const QString & topic)
-{
+template <typename T> void RosTopicImpl<T>::setTopic(const QString &topic) {
   if (topic == _topic) {
     return;
   }
@@ -92,16 +95,15 @@ template<typename T> void RosTopicImpl<T>::setTopic(const QString & topic)
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   _subscriber = node->create_subscription<T>(
-    topic.toStdString(), 1,
-    std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
+      topic.toStdString(), 1,
+      std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
 
   _publisher = node->create_publisher<T>(topic.toStdString(), 1);
 
   _topic = topic;
 }
 
-template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
-{
+template <typename T> void RosTopicImpl<T>::setValue(const QVariant &value) {
 
   if (value == _value) {
     return;
@@ -111,8 +113,7 @@ template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
   publish();
 }
 
-template<> void RosTopicImpl<hri_msgs::msg::Expression>::publish()
-{
+template <> void RosTopicImpl<hri_msgs::msg::Expression>::publish() {
 
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
@@ -130,27 +131,14 @@ template<> void RosTopicImpl<hri_msgs::msg::Expression>::publish()
   _publisher->publish(message);
 }
 
-template<> void RosTopicImpl<hri_msgs::msg::LiveSpeech>::publish()
-{
+template <> void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::publish() {
 
-  if (!_publisher) {
-    std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
-    return;
-  }
-
-  if (std::string(_publisher->get_topic_name()).empty()) {
-    std::cerr << "RosTopic.publish() called without any topic." << std::endl;
-    return;
-  }
-
-  hri_msgs::msg::LiveSpeech message;
-  message.final = _value.value<QString>().toStdString();
-
-  _publisher->publish(message);
+  std::cerr << "Publishing a ClosedCaption msg from QML is not supported."
+            << std::endl;
+  return;
 }
 
-template<typename T> void RosTopicImpl<T>::publish()
-{
+template <typename T> void RosTopicImpl<T>::publish() {
 
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
@@ -180,4 +168,4 @@ template class RosTopicImpl<std_msgs::msg::Float32>;
 template class RosTopicImpl<std_msgs::msg::Bool>;
 template class RosTopicImpl<std_msgs::msg::String>;
 template class RosTopicImpl<hri_msgs::msg::Expression>;
-template class RosTopicImpl<hri_msgs::msg::LiveSpeech>;
+template class RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>;

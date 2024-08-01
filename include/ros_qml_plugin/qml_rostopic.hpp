@@ -21,6 +21,7 @@
 #include <memory>
 #include <thread>
 
+#include <hri_actions_msgs/msg/closed_caption.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
@@ -29,8 +30,7 @@
  * @brief A QtQuick item that publish/subscribe to a ROS2 topic of type
  * std_msgs/Int16.
  */
-class RosTopic : public QObjectRos2
-{
+class RosTopic : public QObjectRos2 {
   Q_OBJECT
   Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
@@ -52,9 +52,7 @@ protected:
   QVariant _value;
 };
 
-template<typename T>
-class RosTopicImpl : public RosTopic
-{
+template <typename T> class RosTopicImpl : public RosTopic {
 
 public:
   RosTopicImpl<T>() {}
@@ -64,11 +62,25 @@ public:
   void setValue(const QVariant &);
   Q_INVOKABLE void publish();
 
-private:
-  void onIncomingData(const T & data);
+protected:
+  virtual void onIncomingData(const T &data);
 
+private:
   typename rclcpp::Publisher<T>::SharedPtr _publisher;
   typename rclcpp::Subscription<T>::SharedPtr _subscriber;
+};
+
+class ClosedCaptionTopic
+    : public RosTopicImpl<hri_actions_msgs::msg::ClosedCaption> {
+  Q_OBJECT
+  Q_PROPERTY(QString speaker_id MEMBER _speaker_id)
+
+protected:
+  void
+  onIncomingData(const hri_actions_msgs::msg::ClosedCaption &data) override;
+
+private:
+  QString _speaker_id;
 };
 
 #endif // ROS_QML_PLUGIN__QML_ROSTOPIC_HPP_
