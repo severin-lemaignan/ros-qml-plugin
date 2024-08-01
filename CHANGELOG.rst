@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.3.1 (2024-08-01)
+------------------
 * fix remote parameter setting/reading
 * Contributors: Séverin Lemaignan
 
