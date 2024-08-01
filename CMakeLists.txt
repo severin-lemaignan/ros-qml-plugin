@@ -102,4 +102,10 @@ else()
   ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 endif()
 
+
+# Following hooks are used to configure the QML2_IMPORT_PATH, so
+# that the QML plugin can be found by the QML engine.
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.dsv.in")
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/hooks/${PROJECT_NAME}.sh.in")
+
 ament_package()
