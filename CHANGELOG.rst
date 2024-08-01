@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.4.0 (2024-08-01)
+------------------
 * add support for ClosedCaptions
   While here, removed support for LiveSpeech
 * Contributors: Séverin Lemaignan
