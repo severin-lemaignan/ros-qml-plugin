@@ -66,8 +66,32 @@ void RosParam::setValue(QVariant value)
       parameter = std::make_shared<rclcpp::Parameter>(
         _name.toStdString(), value.toString().toStdString());
       break;
+    case QVariant::UserType:
+    case QVariant::StringList:
+      {
+        if (value.canConvert<QStringList>() && value.convert(QVariant::StringList)) 
+        {
+          auto stringList = value.toStringList();
+          std::vector<std::string> v;
+          v.reserve(stringList.size());  // Reserve memory for efficiency
+
+          for (const QString &qStr : stringList) {
+                v.push_back(qStr.toStdString());  // Convert each QString to std::string
+          }
+
+          parameter = std::make_shared<rclcpp::Parameter>(
+                _name.toStdString(), v);
+
+        }
+        else {
+            std::cerr << "Unsupported user type for parameter value: " <<  value.typeName()
+                        << std::endl;
+            }
+      }
+      break;
     default:
-      std::cerr << "Unsupported type for parameter value" << std::endl;
+      std::cerr << "Unsupported type for parameter value: " <<  value.typeName()
+                << std::endl;
   }
 
   if (parameter) {
@@ -83,12 +107,6 @@ void RosParam::onRos2Initialized()
 {
   if (_name.isEmpty()) {
     std::cerr << "Cannot configure a parameter without a name" << std::endl;
-    return;
-  }
-  if (!_value.isValid()) {
-    std::cerr << "Cannot configure a parameter without a type; set 'value' to "
-      "a default value"
-              << std::endl;
     return;
   }
 
@@ -127,6 +145,13 @@ void RosParam::onRos2Initialized()
   } else {
     ///////////////////////////////////////////////////////////////////////////
     // LOCAL PARAMETER
+
+    if (!_value.isValid()) {
+        std::cerr << "Cannot configure a parameter without a type; set 'value' to "
+        "a default value"
+                << std::endl;
+        return;
+    }
 
     _local_cb = _node->add_on_set_parameters_callback(
       std::bind(&RosParam::onLocalParameterEvent, this, _1));
@@ -234,6 +259,15 @@ void RosParam::onRemoteParameterEvent(
         case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
           value =
             QVariant::fromValue(QString::fromStdString(p.value.string_value));
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY:
+          {
+            QStringList stringList;
+            for (const auto & s : p.value.string_array_value) {
+              stringList.append(QString::fromStdString(s));
+            }
+            value = QVariant::fromValue(stringList);
+          }
           break;
         default:
           std::cerr << "Unsupported type " << p.value.type
