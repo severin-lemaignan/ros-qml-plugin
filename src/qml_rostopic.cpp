@@ -29,7 +29,6 @@ template<>
 void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
   const hri_msgs::msg::Expression & data)
 {
-
   QVariant value = QVariant::fromValue(QString::fromStdString(data.expression));
 
   if (value != _value) {
@@ -46,7 +45,6 @@ void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
 void ClosedCaptionTopic::onIncomingData(
   const hri_actions_msgs::msg::ClosedCaption & data)
 {
-
   QVariant value = QVariant::fromValue(QString::fromStdString(data.text));
   QString speaker_id = QString::fromStdString(data.speaker_id);
 
@@ -68,9 +66,52 @@ template<>
 void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::onIncomingData(
   const hri_actions_msgs::msg::ClosedCaption &) {}
 
+// specialization for hri_actions_msgs::msg::Intent
+void IntentTopic::onIncomingData(
+  const hri_actions_msgs::msg::Intent & msg)
+{
+  QVariant value = QVariant::fromValue(QString::fromStdString(msg.intent));
+  QString data = QString::fromStdString(msg.data);
+
+  if (value != _value || data != _data) {
+    _value = value;
+    _data = data;
+    emit onValueChanged();
+  }
+
+  // always emit the signal to signal a message has been received, even if the
+  // value did not change
+  emit messageReceived();
+}
+
+template<>
+void RosTopicImpl<hri_actions_msgs::msg::Intent>::onIncomingData(
+  const hri_actions_msgs::msg::Intent &) {}
+
+void IntentTopic::publish()
+{
+  if (!_publisher) {
+    std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
+    return;
+  }
+
+  if (std::string(_publisher->get_topic_name()).empty()) {
+    std::cerr << "RosTopic.publish() called without any topic." << std::endl;
+    return;
+  }
+
+  hri_actions_msgs::msg::Intent message;
+  message.intent = _value.value<QString>().toStdString();
+  message.data = _data.toStdString();
+
+  _publisher->publish(message);
+}
+
+template<>
+void RosTopicImpl<hri_actions_msgs::msg::Intent>::publish() {}
+
 template<typename T> void RosTopicImpl<T>::onIncomingData(const T & data)
 {
-
   QVariant value;
 
   // special case std::string, as they are not directly convertible to QVariant
@@ -109,7 +150,6 @@ template<typename T> void RosTopicImpl<T>::setTopic(const QString & topic)
 
 template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
 {
-
   if (value == _value) {
     return;
   }
@@ -120,7 +160,6 @@ template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
 
 template<> void RosTopicImpl<hri_msgs::msg::Expression>::publish()
 {
-
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
     return;
@@ -139,15 +178,14 @@ template<> void RosTopicImpl<hri_msgs::msg::Expression>::publish()
 
 template<> void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::publish()
 {
-
   std::cerr << "Publishing a ClosedCaption msg from QML is not supported."
             << std::endl;
   return;
 }
 
+
 template<typename T> void RosTopicImpl<T>::publish()
 {
-
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
     return;
@@ -177,3 +215,4 @@ template class RosTopicImpl<std_msgs::msg::Bool>;
 template class RosTopicImpl<std_msgs::msg::String>;
 template class RosTopicImpl<hri_msgs::msg::Expression>;
 template class RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>;
+template class RosTopicImpl<hri_actions_msgs::msg::Intent>;

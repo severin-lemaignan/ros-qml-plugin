@@ -22,10 +22,17 @@
 #include <thread>
 
 #include <hri_actions_msgs/msg/closed_caption.hpp>
+#include <hri_actions_msgs/msg/intent.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
 
+#define SHARED_CONSTANT(type, name, value) \
+  Q_PROPERTY(type name READ name CONSTANT) \
+  type name() const {return value;}
+
+
+///////////////////////////////////////////////////////////////////////////////
 /**
  * @brief A QtQuick item that publish/subscribe to a ROS2 topic of type
  * std_msgs/Int16.
@@ -53,10 +60,10 @@ protected:
   QVariant _value;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 template<typename T>
 class RosTopicImpl : public RosTopic
 {
-
 public:
   RosTopicImpl<T>() {}
   virtual ~RosTopicImpl<T>() {}
@@ -68,11 +75,11 @@ public:
 protected:
   virtual void onIncomingData(const T & data);
 
-private:
   typename rclcpp::Publisher<T>::SharedPtr _publisher;
   typename rclcpp::Subscription<T>::SharedPtr _subscriber;
 };
 
+///////////////////////////////////////////////////////////////////////////////
 class ClosedCaptionTopic
   : public RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>
 {
@@ -87,4 +94,29 @@ private:
   QString _speaker_id;
 };
 
-#endif // ROS_QML_PLUGIN__QML_ROSTOPIC_HPP_
+///////////////////////////////////////////////////////////////////////////////
+class IntentTopic
+  : public RosTopicImpl<hri_actions_msgs::msg::Intent>
+{
+  Q_OBJECT
+  Q_PROPERTY(QString data MEMBER _data)
+  SHARED_CONSTANT(
+    QString, WakeUp,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::WAKEUP))
+  SHARED_CONSTANT(
+    QString, Suspend,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::SUSPEND))
+
+public:
+  Q_INVOKABLE void publish();
+
+protected:
+  void
+  onIncomingData(const hri_actions_msgs::msg::Intent & data) override;
+
+private:
+  QString _data;
+};
+
+
+#endif  // ROS_QML_PLUGIN__QML_ROSTOPIC_HPP_
