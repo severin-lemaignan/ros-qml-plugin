@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [minor] linting
+* Contributors: Séverin Lemaignan
+
 2.4.0 (2024-08-01)
 ------------------
 * add support for ClosedCaptions
