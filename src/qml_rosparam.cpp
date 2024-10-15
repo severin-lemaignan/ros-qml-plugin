@@ -69,28 +69,26 @@ void RosParam::setValue(QVariant value)
     case QVariant::UserType:
     case QVariant::StringList:
       {
-        if (value.canConvert<QStringList>() && value.convert(QVariant::StringList)) 
-        {
+        if (value.canConvert<QStringList>() && value.convert(QVariant::StringList)) {
           auto stringList = value.toStringList();
           std::vector<std::string> v;
           v.reserve(stringList.size());  // Reserve memory for efficiency
 
-          for (const QString &qStr : stringList) {
-                v.push_back(qStr.toStdString());  // Convert each QString to std::string
+          for (const QString & qStr : stringList) {
+            v.push_back(qStr.toStdString());      // Convert each QString to std::string
           }
 
           parameter = std::make_shared<rclcpp::Parameter>(
-                _name.toStdString(), v);
+            _name.toStdString(), v);
 
+        } else {
+          std::cerr << "Unsupported user type for parameter value: " << value.typeName()
+                    << std::endl;
         }
-        else {
-            std::cerr << "Unsupported user type for parameter value: " <<  value.typeName()
-                        << std::endl;
-            }
       }
       break;
     default:
-      std::cerr << "Unsupported type for parameter value: " <<  value.typeName()
+      std::cerr << "Unsupported type for parameter value: " << value.typeName()
                 << std::endl;
   }
 
@@ -147,10 +145,10 @@ void RosParam::onRos2Initialized()
     // LOCAL PARAMETER
 
     if (!_value.isValid()) {
-        std::cerr << "Cannot configure a parameter without a type; set 'value' to "
+      std::cerr << "Cannot configure a parameter without a type; set 'value' to "
         "a default value"
                 << std::endl;
-        return;
+      return;
     }
 
     _local_cb = _node->add_on_set_parameters_callback(
