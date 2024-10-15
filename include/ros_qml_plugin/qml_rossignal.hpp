@@ -57,4 +57,4 @@ private:
   rclcpp::Subscription<std_msgs::msg::Empty>::SharedPtr _subscriber;
 };
 
-#endif // ROS_QML_PLUGIN__QML_ROSSIGNAL_HPP_
+#endif  // ROS_QML_PLUGIN__QML_ROSSIGNAL_HPP_

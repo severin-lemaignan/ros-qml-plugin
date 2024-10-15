@@ -20,6 +20,7 @@
 #include <QVariant>
 #include <memory>
 #include <thread>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -70,4 +71,4 @@ private:
   rclcpp::Node::SharedPtr _node;
 };
 
-#endif // ROS_QML_PLUGIN__QML_ROSPARAM_HPP_
+#endif  // ROS_QML_PLUGIN__QML_ROSPARAM_HPP_

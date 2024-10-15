@@ -19,7 +19,6 @@ using std::placeholders::_1;
 
 void RosSignal::setTopic(QString topic)
 {
-
   if (topic == _topic) {
     return;
   }

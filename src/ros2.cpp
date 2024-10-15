@@ -40,7 +40,7 @@ void Ros2Qml::init(const QString & name, const QStringList & argv, quint32)
     std::copy(string.begin(), string.end(), cargv[i]);
   }
   context_ = rclcpp::Context::make_shared();
-  context_->init(argc, cargv); // TODO(upstream): init options
+  context_->init(argc, cargv);  // TODO(upstream): init options
   rclcpp::NodeOptions node_options;
   node_options.context(context_);
   node_ = rclcpp::Node::make_shared(

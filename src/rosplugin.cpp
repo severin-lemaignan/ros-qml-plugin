@@ -26,7 +26,6 @@
 #include "ros_qml_plugin/qml_rostopic.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
-#include <hri_actions_msgs/msg/closed_caption.hpp>
 #include <hri_msgs/msg/expression.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
@@ -56,6 +55,7 @@ public:
       uri, 2, 0,
       "ExpressionTopic");
     qmlRegisterType<ClosedCaptionTopic>(uri, 2, 0, "ClosedCaptionTopic");
+    qmlRegisterType<IntentTopic>(uri, 2, 0, "IntentTopic");
 
     qmlRegisterType<RosSignal>(uri, 2, 0, "RosSignal");
   }

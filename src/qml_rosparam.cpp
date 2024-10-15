@@ -22,7 +22,6 @@ RosParam::RosParam() {_node = Ros2Qml::getInstance().node();}
 
 void RosParam::setValue(QVariant value)
 {
-
   if (value == _value) {
     return;
   } else {
@@ -82,7 +81,6 @@ void RosParam::setValue(QVariant value)
 
 void RosParam::onRos2Initialized()
 {
-
   if (_name.isEmpty()) {
     std::cerr << "Cannot configure a parameter without a name" << std::endl;
     return;
@@ -136,7 +134,6 @@ void RosParam::onRos2Initialized()
     QVariant updated_value = _value;
 
     if (_value.isValid()) {
-
       switch (_value.type()) {
         case QVariant::Bool:
           updated_value = QVariant::fromValue(
@@ -180,7 +177,6 @@ void RosParam::onRos2Initialized()
 rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(
   const std::vector<rclcpp::Parameter> & parameters)
 {
-
   rcl_interfaces::msg::SetParametersResult result;
   result.successful = true;
 
@@ -188,7 +184,6 @@ rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(
 
   for (const auto & parameter : parameters) {
     if (parameter.get_name() == _name.toStdString()) {
-
       switch (parameter.get_type()) {
         case rclcpp::ParameterType::PARAMETER_BOOL:
           value = QVariant::fromValue(parameter.get_value<bool>());
@@ -222,7 +217,6 @@ rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(
 void RosParam::onRemoteParameterEvent(
   const rcl_interfaces::msg::ParameterEvent::SharedPtr event)
 {
-
   QVariant value = _value;
 
   for (const auto & p : event->changed_parameters) {
