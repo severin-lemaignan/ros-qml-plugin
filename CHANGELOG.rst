@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add support for hri_actions_msgs::Intent topics
+* linting
+* Contributors: Séverin Lemaignan
+
 2.4.1 (2024-10-15)
 ------------------
 * [minor] linting
