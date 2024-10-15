@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.6.0 (2024-10-15)
+------------------
 * add support for string array parameters
 * Contributors: Séverin Lemaignan
 
