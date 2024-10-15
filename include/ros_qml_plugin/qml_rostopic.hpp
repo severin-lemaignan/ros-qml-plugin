@@ -30,7 +30,8 @@
  * @brief A QtQuick item that publish/subscribe to a ROS2 topic of type
  * std_msgs/Int16.
  */
-class RosTopic : public QObjectRos2 {
+class RosTopic : public QObjectRos2
+{
   Q_OBJECT
   Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
@@ -52,7 +53,9 @@ protected:
   QVariant _value;
 };
 
-template <typename T> class RosTopicImpl : public RosTopic {
+template<typename T>
+class RosTopicImpl : public RosTopic
+{
 
 public:
   RosTopicImpl<T>() {}
@@ -63,7 +66,7 @@ public:
   Q_INVOKABLE void publish();
 
 protected:
-  virtual void onIncomingData(const T &data);
+  virtual void onIncomingData(const T & data);
 
 private:
   typename rclcpp::Publisher<T>::SharedPtr _publisher;
@@ -71,13 +74,14 @@ private:
 };
 
 class ClosedCaptionTopic
-    : public RosTopicImpl<hri_actions_msgs::msg::ClosedCaption> {
+  : public RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>
+{
   Q_OBJECT
   Q_PROPERTY(QString speaker_id MEMBER _speaker_id)
 
 protected:
   void
-  onIncomingData(const hri_actions_msgs::msg::ClosedCaption &data) override;
+  onIncomingData(const hri_actions_msgs::msg::ClosedCaption & data) override;
 
 private:
   QString _speaker_id;
