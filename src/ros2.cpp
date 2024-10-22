@@ -51,11 +51,8 @@ void Ros2Qml::init(const QString & name, const QStringList & argv, quint32)
 
   rclcpp::ExecutorOptions executor_options;
   executor_options.context = context_;
-  // StaticSingleThreadedExecutor may be a bit faster but will keep a reference
-  // to the subscription and therefore not unsubscribe if the subscription is
-  // reset.
   auto executor =
-    rclcpp::executors::SingleThreadedExecutor::make_unique(executor_options);
+    rclcpp::executors::MultiThreadedExecutor::make_unique(executor_options);
   executor->add_node(node_);
   for (int i = 0; i < argv.size(); ++i) {
     delete[] cargv[i];
