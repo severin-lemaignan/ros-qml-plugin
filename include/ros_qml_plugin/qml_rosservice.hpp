@@ -15,109 +15,61 @@
 #ifndef ROS_QML_PLUGIN__QML_ROSSERVICE_HPP_
 #define ROS_QML_PLUGIN__QML_ROSSERVICE_HPP_
 
-#include <atomic>
-#include <functional>
-#include <iostream>
+#include <QObject>
+#include <QQuickItem>
 
 #include <i18n_msgs/srv/get_locales.hpp>
-#include <QString>
-#include <QVector>
 #include <rclcpp/rclcpp.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
-#include "ros_qml_plugin/ros2.hpp"
 
-
-template<typename ServiceT>
-class RosService
+class RosService : public QObjectRos2
 {
+  Q_OBJECT
+  Q_PROPERTY(QString service WRITE setService MEMBER _service)
+
 public:
-  using RequestPtr = typename ServiceT::Request::SharedPtr;
-  using Client = typename rclcpp::Client<ServiceT>;
-  using ClientPtr = typename Client::SharedPtr;
-  using SharedFutureResponse = typename Client::SharedFuture;
-  using SharedFutureAndRequestId = typename Client::SharedFutureAndRequestId;
-  using CallbackType = typename std::function<void (SharedFutureResponse)>;
+  RosService() {}
+  virtual ~RosService() {}
 
-  RosService(const std::string & topic)
-  : topic_(topic)
-  {
-    node_ = Ros2Qml::getInstance().node();
-    cb_group_ = node->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
-    client_ = node->create_client<ServiceT>(topic, rmw_qos_profile_services_default, cb_group_);
-  }
+  virtual void setService(const QString &) = 0;
 
-  void cancel()
-  {
-    client->prune_pending_requests();
-    ready_ = true;
-  }
+signals:
+  void resultReceived();
 
 protected:
-  ~RosService()
-  {
-    cancel();
-  }
-
-  bool request(RequestPtr request, CallbackType callback, rclcpp::Duration timeout)
-  {
-    using namespace std::placeholders;
-
-    if (!client_->service_is_ready()) {
-      std::cerr << "Service server " << topic_ << " not ready";
-      return false;
-    }
-
-    if (!ready_.exchange(false)) {
-      std::cerr << "Service client  " << topic_ << " not ready";
-      ready_ = true;
-      return false;
-    }
-
-    auto future_and_id = client_->async_send_request(
-      request, std::bind(&onResponse, this, callback, _1));
-    rclcpp::create_timer(
-      node_, node->get_clock(), timeout, std::bind(&onTimeout, this, callback, future_and_id));
-
-    return true;
-  }
-
-private:
-  void onResponse(CallbackType callback, SharedFutureResponse future)
-  {
-    timeout_timer_.reset();
-    ready_ = true;
-    callback(future);
-  }
-
-  void onTimeout(CallbackType callback, SharedFutureAndRequestId future_and_id)
-  {
-    client_->remove_pending_request(future_and_id);
-    timeout_timer_.reset();
-    callback(SharedFutureResponse());
-  }
-
-  rclcpp::Node::SharedPtr node_;
-  std::string topic_;
-  rclcpp::CallbackGroup::SharedPtr cb_group_;
-  ClientPtr client_;
-  rclcpp::TimerBase::SharedPtr timeout_timer_;
-  std::atomic_bool ready_;
+  QString _service;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-class GetLocalesService
-: public RosService<i18n_msgs::srv::GetLocales>, QObjectRos2
+
+template<typename T>
+class RosServiceImpl : public RosService
 {
-  Q_OBJECT
 
 public:
-  GetLocalesService();
-  ~GetLocalesService();
-  bool request();
+  RosServiceImpl<T>() {}
+  virtual ~RosServiceImpl<T>() {}
 
-signals:
-  void onResponse(bool success, QVector<QString> locales);
+  void setService(const QString &);
+
+protected:
+  typename rclcpp::Client<T>::SharedPtr _client;
+  rclcpp::CallbackGroup::SharedPtr _cb_group;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+class GetLocalesService : public RosServiceImpl<i18n_msgs::srv::GetLocales>
+{
+  Q_OBJECT
+  Q_PROPERTY(QStringList locales MEMBER _locales)
+
+public:
+  Q_INVOKABLE void callService();
+
+private:
+  QStringList _locales;
 };
 
 

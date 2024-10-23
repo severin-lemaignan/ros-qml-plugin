@@ -18,6 +18,7 @@
   <depend>libqt5-qml</depend>
   <depend>libqt5-quick</depend>
   <depend>rclcpp</depend>
+  <depend>rclcpp_action</depend>
   <depend>std_msgs</depend>
 
   <build_depend>qtbase5-dev</build_depend>

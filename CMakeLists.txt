@@ -32,6 +32,10 @@ set(SOURCES
     src/qml_rostopic.cpp
     include/ros_qml_plugin/qml_rossignal.hpp
     src/qml_rossignal.cpp
+    include/ros_qml_plugin/qml_rosservice.hpp
+    src/qml_rosservice.cpp
+    include/ros_qml_plugin/qml_rosaction.hpp
+    src/qml_rosaction.cpp
     include/ros_qml_plugin/qobject_ros2.hpp
     include/ros_qml_plugin/ros2.hpp
     src/rosplugin.cpp
@@ -49,10 +53,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 ament_target_dependencies(
   ${PROJECT_NAME}
   rclcpp
+  rclcpp_action
   image_transport
   std_msgs
   hri_msgs
   hri_actions_msgs
+  i18n_msgs
   Qt5Core
   Qt5Quick
   Qt5Qml
