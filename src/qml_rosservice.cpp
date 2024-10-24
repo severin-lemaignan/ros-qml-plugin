@@ -31,7 +31,7 @@ template<typename T> void RosServiceImpl<T>::setService(const QString & service)
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   _client = node->create_client<T>(
-    service.toStdString(), rmw_qos_profile_services_default, _cb_group);
+    service.toStdString(), rmw_qos_profile_services_default);
 
 }
 
@@ -53,22 +53,26 @@ void GetLocalesService::callService()
     std::cerr << "ROS2 is not ok" << std::endl;
   }
 
-  QStringList locales;
   auto request = std::make_shared<i18n_msgs::srv::GetLocales::Request>();
-  auto result_future = _client->async_send_request(request);
-  std::future_status status = result_future.wait_for(10s);  // timeout to guarantee a graceful finish
-  if (status == std::future_status::ready) {
-    std::cout << "Received response" << std::endl;
-    auto result_locales = result_future.get()->locales;
-    for (const auto & locale : result_locales) {
-      locales.append(QString::fromStdString(locale));
-    }
-    if (locales != _locales) {
-      _locales = locales;
-    }
-    emit resultReceived();
-  }
+  auto result_future =
+    _client->async_send_request(
+    request,
+    std::bind(&GetLocalesService::handle_response, this, std::placeholders::_1));
 
+}
+
+void GetLocalesService::handle_response(
+  rclcpp::Client<i18n_msgs::srv::GetLocales>::SharedFuture future)
+{
+  QStringList locales;
+  auto result_locales = future.get()->locales;
+  for (const auto & locale : result_locales) {
+    locales.append(QString::fromStdString(locale));
+  }
+  if (locales != _locales) {
+    _locales = locales;
+  }
+  emit resultReceived();
 }
 
 template class RosServiceImpl<i18n_msgs::srv::GetLocales>;

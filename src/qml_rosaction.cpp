@@ -32,7 +32,7 @@ template<typename T> void RosActionImpl<T>::setAction(const QString & action)
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   _client = rclcpp_action::create_client<T>(
-    node, action.toStdString(), _cb_group_2);
+    node, action.toStdString());
 
   std::cout << "Action set" << std::endl;
 
@@ -62,21 +62,24 @@ void SetLocaleAction::sendGoal()
   send_goal_options.feedback_callback = std::bind(
     &SetLocaleAction::feedback_callback, this,
     std::placeholders::_1, std::placeholders::_2);
+  send_goal_options.result_callback = std::bind(
+    &SetLocaleAction::result_callback, this, std::placeholders::_1);
 
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
-  goal_handle_future.wait_for(3s);
-  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr goal_handle =
-    goal_handle_future.get();
-  if (!goal_handle) {
-    std::cerr << "Goal was rejected by server" << std::endl;
-    return;
-  }
+}
 
-  auto result_future = _client->async_get_result(goal_handle);
-  result_future.wait_for(3s);
-  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::WrappedResult wrapped_result =
-    result_future.get();
-  switch (wrapped_result.code) {
+void SetLocaleAction::feedback_callback(
+  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr,
+  const std::shared_ptr<const i18n_msgs::action::SetLocale::Feedback> feedback)
+{
+  _progress = QString::fromStdString(feedback->progress);
+  emit feedbackReceived();
+}
+
+void SetLocaleAction::result_callback(
+  const rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::WrappedResult & result)
+{
+  switch (result.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:
       break;
     case rclcpp_action::ResultCode::ABORTED:
@@ -89,19 +92,8 @@ void SetLocaleAction::sendGoal()
       std::cerr << "Unknown result code" << std::endl;
       return;
   }
-
-  _error_msg = QString::fromStdString(wrapped_result.result->error_msg);
+  _error_msg = QString::fromStdString(result.result->error_msg);
   emit resultReceived();
-
-  // node.reset();
-}
-
-void SetLocaleAction::feedback_callback(
-  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr,
-  const std::shared_ptr<const i18n_msgs::action::SetLocale::Feedback> feedback)
-{
-  _progress = QString::fromStdString(feedback->progress);
-  emit feedbackReceived();
 }
 
 template class RosActionImpl<i18n_msgs::action::SetLocale>;

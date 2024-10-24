@@ -57,7 +57,7 @@ public:
 
 protected:
   typename rclcpp_action::Client<T>::SharedPtr _client;
-  rclcpp::CallbackGroup::SharedPtr _cb_group_2;
+  rclcpp::CallbackGroup::SharedPtr _cb_group;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,6 +79,8 @@ private:
   void feedback_callback(
     rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr,
     const std::shared_ptr<const i18n_msgs::action::SetLocale::Feedback>);
+  void result_callback(
+    const rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::WrappedResult &);
 };
 
 

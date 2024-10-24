@@ -55,7 +55,7 @@ public:
 
 protected:
   typename rclcpp::Client<T>::SharedPtr _client;
-  rclcpp::CallbackGroup::SharedPtr _cb_group;
+  // rclcpp::CallbackGroup::SharedPtr _cb_group;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,6 +70,7 @@ public:
 
 private:
   QStringList _locales;
+  void handle_response(rclcpp::Client<i18n_msgs::srv::GetLocales>::SharedFuture future);
 };
 
 
