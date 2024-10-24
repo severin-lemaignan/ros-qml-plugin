@@ -113,7 +113,7 @@ void RosParam::onRos2Initialized()
   if (remote_parameter) {
     ///////////////////////////////////////////////////////////////////////////
     // REMOTE PARAMETER
-    //
+
     if (!Ros2Qml::getInstance().isInitialized()) {
       std::cerr
         << "ROS 2 not yet initialized! Cannot configure a remote parameter."
@@ -140,6 +140,55 @@ void RosParam::onRos2Initialized()
     // add callback to update the value when the parameter changes
     _remote_cb = _param_client->on_parameter_event(
       std::bind(&RosParam::onRemoteParameterEvent, this, _1));
+
+    // Get the current remote parameter value, if available
+    auto parameters_future = _param_client->get_parameters({_name.toStdString()});
+    std::future_status status = parameters_future.wait_for(10s);  // timeout to guarantee a graceful finish
+    if (status != std::future_status::ready) {
+      std::cerr << "Failed to get parameter " << _name.toStdString() << std::endl;
+      return;
+    }
+    auto parameters = parameters_future.get();
+    if (parameters.empty()) {
+      std::cerr << "Parameter " << _name.toStdString() <<
+        " not found, could not initialize to the remote value" << std::endl;
+      return;
+    }
+
+    auto parameter = parameters.front();
+
+    QVariant value = _value;
+
+    switch (parameter.get_type()) {
+      case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL:
+        value = QVariant::fromValue(parameter.as_bool());
+        break;
+      case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER:
+        value = QVariant::fromValue(parameter.as_int());
+        break;
+      case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE:
+        value = QVariant::fromValue(parameter.as_double());
+        break;
+      case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
+        value = QVariant::fromValue(QString::fromStdString(parameter.as_string()));
+        break;
+      case rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY:
+        {
+          QStringList stringList;
+          for (const auto & s : parameter.as_string_array()) {
+            stringList.append(QString::fromStdString(s));
+          }
+          value = QVariant::fromValue(stringList);
+        }
+        break;
+      default:
+        std::cerr << "Unsupported type " << parameter.get_type() << " for ROS2 parameter " <<
+          parameter.get_name() << " of node " << _target_node_name.toStdString() << std::endl;
+    }
+    if (value != _value) {
+      _value = value;
+      emit onValueChanged();
+    }
   } else {
     ///////////////////////////////////////////////////////////////////////////
     // LOCAL PARAMETER
