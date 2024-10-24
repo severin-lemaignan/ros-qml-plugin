@@ -59,7 +59,9 @@ void SetLocaleAction::sendGoal()
   goal_msg.locale = _locale.toStdString();
 
   auto send_goal_options = rclcpp_action::Client<i18n_msgs::action::SetLocale>::SendGoalOptions();
-  send_goal_options.feedback_callback = std::bind(&SetLocaleAction::feedback_callback, this, std::placeholders::_1, std::placeholders::_2);
+  send_goal_options.feedback_callback = std::bind(
+    &SetLocaleAction::feedback_callback, this,
+    std::placeholders::_1, std::placeholders::_2);
 
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
   goal_handle_future.wait_for(3s);
