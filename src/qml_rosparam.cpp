@@ -22,15 +22,12 @@ RosParam::RosParam() {_node = Ros2Qml::getInstance().node();}
 
 void RosParam::setValue(QVariant value)
 {
-  if (value == _value) {
-    return;
-  } else {
+  if (value != _value) {
     _value = value;
   }
 
   if (!_is_ready) {
-    std::cerr << "Parameter service not ready; have you called ready() in "
-      "Component.onCompleted?"
+    std::cerr << "Parameter service not ready yet"
               << std::endl;
     return;
   }
@@ -141,53 +138,59 @@ void RosParam::onRos2Initialized()
     _remote_cb = _param_client->on_parameter_event(
       std::bind(&RosParam::onRemoteParameterEvent, this, _1));
 
-    // Get the current remote parameter value, if available
-    auto parameters_future = _param_client->get_parameters({_name.toStdString()});
-    std::future_status status = parameters_future.wait_for(10s);  // timeout to guarantee a graceful finish
-    if (status != std::future_status::ready) {
-      std::cerr << "Failed to get parameter " << _name.toStdString() << std::endl;
-      return;
-    }
-    auto parameters = parameters_future.get();
-    if (parameters.empty()) {
-      std::cerr << "Parameter " << _name.toStdString() <<
-        " not found, could not initialize to the remote value" << std::endl;
-      return;
-    }
+    // If the value is set in qml, set the remote parameter, otherwise get the remote value
+    if (_value.isValid()) {
+      _is_ready = true;
+      setValue(_value);
+    } else {
+      auto parameters_future = _param_client->get_parameters({_name.toStdString()});
+      std::future_status status = parameters_future.wait_for(10s);
+      if (status != std::future_status::ready) {
+        std::cerr << "Failed to get parameter " << _name.toStdString() << std::endl;
+        return;
+      }
+      auto parameters = parameters_future.get();
+      if (parameters.empty()) {
+        std::cerr << "Parameter " << _name.toStdString() <<
+          " not found, could not initialize to the remote value" << std::endl;
+        return;
+      }
 
-    auto parameter = parameters.front();
+      auto parameter = parameters.front();
 
-    QVariant value = _value;
+      QVariant value = _value;
 
-    switch (parameter.get_type()) {
-      case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL:
-        value = QVariant::fromValue(parameter.as_bool());
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER:
-        value = QVariant::fromValue(parameter.as_int());
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE:
-        value = QVariant::fromValue(parameter.as_double());
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
-        value = QVariant::fromValue(QString::fromStdString(parameter.as_string()));
-        break;
-      case rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY:
-        {
-          QStringList stringList;
-          for (const auto & s : parameter.as_string_array()) {
-            stringList.append(QString::fromStdString(s));
+      switch (parameter.get_type()) {
+        case rcl_interfaces::msg::ParameterType::PARAMETER_BOOL:
+          value = QVariant::fromValue(parameter.as_bool());
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_INTEGER:
+          value = QVariant::fromValue(parameter.as_int());
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_DOUBLE:
+          value = QVariant::fromValue(parameter.as_double());
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_STRING:
+          value = QVariant::fromValue(QString::fromStdString(parameter.as_string()));
+          break;
+        case rcl_interfaces::msg::ParameterType::PARAMETER_STRING_ARRAY:
+          {
+            QStringList stringList;
+            for (const auto & s : parameter.as_string_array()) {
+              stringList.append(QString::fromStdString(s));
+            }
+            value = QVariant::fromValue(stringList);
           }
-          value = QVariant::fromValue(stringList);
-        }
-        break;
-      default:
-        std::cerr << "Unsupported type " << parameter.get_type() << " for ROS2 parameter " <<
-          parameter.get_name() << " of node " << _target_node_name.toStdString() << std::endl;
-    }
-    if (value != _value) {
-      _value = value;
-      emit onValueChanged();
+          break;
+        default:
+          std::cerr << "Unsupported type " << parameter.get_type() << " for ROS2 parameter " <<
+            parameter.get_name() << " of node " << _target_node_name.toStdString() << std::endl;
+      }
+      if (value != _value) {
+        _value = value;
+        emit onValueChanged();
+      }
+      _is_ready = true;
     }
   } else {
     ///////////////////////////////////////////////////////////////////////////
@@ -242,8 +245,8 @@ void RosParam::onRos2Initialized()
       _value = updated_value;
       emit onValueChanged();
     }
+    _is_ready = true;
   }
-  _is_ready = true;
 }
 
 rcl_interfaces::msg::SetParametersResult RosParam::onLocalParameterEvent(
