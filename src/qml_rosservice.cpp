@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+
 #include <i18n_msgs/srv/get_locales.hpp>
 
 #include "ros_qml_plugin/qml_rosservice.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
-#include <chrono>
 
 using namespace std::chrono_literals;
 
@@ -32,12 +33,10 @@ template<typename T> void RosServiceImpl<T>::setService(const QString & service)
 
   _client = node->create_client<T>(
     service.toStdString(), rmw_qos_profile_services_default);
-
 }
 
 void GetLocalesService::callService()
 {
-
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   if (!_client) {
@@ -58,9 +57,7 @@ void GetLocalesService::callService()
     _client->async_send_request(
     request,
     std::bind(&GetLocalesService::handle_response, this, std::placeholders::_1));
-
 }
-
 void GetLocalesService::handle_response(
   rclcpp::Client<i18n_msgs::srv::GetLocales>::SharedFuture future)
 {

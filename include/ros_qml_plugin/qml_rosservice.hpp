@@ -46,7 +46,6 @@ protected:
 template<typename T>
 class RosServiceImpl : public RosService
 {
-
 public:
   RosServiceImpl<T>() {}
   virtual ~RosServiceImpl<T>() {}

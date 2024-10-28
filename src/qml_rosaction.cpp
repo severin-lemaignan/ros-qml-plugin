@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+
 #include <i18n_msgs/action/set_locale.hpp>
 
 #include <rclcpp_action/rclcpp_action.hpp>
 #include "ros_qml_plugin/qml_rosaction.hpp"
 #include "ros_qml_plugin/ros2.hpp"
-
-#include <chrono>
 
 using namespace std::chrono_literals;
 
@@ -35,7 +35,6 @@ template<typename T> void RosActionImpl<T>::setAction(const QString & action)
     node, action.toStdString());
 
   std::cout << "Action set" << std::endl;
-
 }
 
 void SetLocaleAction::sendGoal()
@@ -59,6 +58,8 @@ void SetLocaleAction::sendGoal()
   goal_msg.locale = _locale.toStdString();
 
   auto send_goal_options = rclcpp_action::Client<i18n_msgs::action::SetLocale>::SendGoalOptions();
+  send_goal_options.goal_response_callback = std::bind(
+    &SetLocaleAction::goal_response_callback, this, std::placeholders::_1);
   send_goal_options.feedback_callback = std::bind(
     &SetLocaleAction::feedback_callback, this,
     std::placeholders::_1, std::placeholders::_2);
@@ -66,6 +67,16 @@ void SetLocaleAction::sendGoal()
     &SetLocaleAction::result_callback, this, std::placeholders::_1);
 
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
+}
+
+void SetLocaleAction::goal_response_callback(
+  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr goal_handle)
+{
+  if (!goal_handle) {
+    std::cerr << "Goal was rejected by server" << std::endl;
+    emit goalRejected();
+    return;
+  }
 }
 
 void SetLocaleAction::feedback_callback(

@@ -28,8 +28,6 @@
 #include "ros_qml_plugin/qml_rosaction.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
-#include <i18n_msgs/srv/get_locales.hpp>
-#include <i18n_msgs/action/set_locale.hpp>
 #include <hri_msgs/msg/expression.hpp>
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
@@ -66,7 +64,6 @@ public:
     qmlRegisterType<GetLocalesService>(uri, 2, 0, "GetLocalesService");
 
     qmlRegisterType<SetLocaleAction>(uri, 2, 0, "SetLocaleAction");
-
   }
 
   void initializeEngine(QQmlEngine * engine, const char * uri)

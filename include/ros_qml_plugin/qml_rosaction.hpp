@@ -17,6 +17,7 @@
 
 #include <QObject>
 #include <QQuickItem>
+#include <memory>
 
 #include <i18n_msgs/action/set_locale.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -36,6 +37,7 @@ public:
   virtual void setAction(const QString &) = 0;
 
 signals:
+  void goalRejected();
   void feedbackReceived();
   void resultReceived();
 
@@ -48,7 +50,6 @@ protected:
 template<typename T>
 class RosActionImpl : public RosAction
 {
-
 public:
   RosActionImpl<T>() {}
   virtual ~RosActionImpl<T>() {}
@@ -76,6 +77,8 @@ private:
   QString _locale;
   QString _error_msg;
   QString _progress;
+  void goal_response_callback(
+    rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr);
   void feedback_callback(
     rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr,
     const std::shared_ptr<const i18n_msgs::action::SetLocale::Feedback>);
