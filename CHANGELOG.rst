@@ -2,6 +2,17 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* setting remote parameter if it is set in qml on initialization
+* Add goal rejected signal for actions, and fix tests
+* Service and action not waiting for response, but triggering a callback
+* Get remote parameter on initialization
+* Uncrustify applied to pass tests
+* Added ros services and actions to the plugin
+* get language service first implementation
+* Contributors: Luka Juricic, ferrangebelli
+
 2.6.1 (2024-10-15)
 ------------------
 * linting
