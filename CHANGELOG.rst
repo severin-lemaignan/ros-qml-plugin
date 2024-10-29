@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.7.0 (2024-10-29)
+------------------
 * setting remote parameter if it is set in qml on initialization
 * Add goal rejected signal for actions, and fix tests
 * Service and action not waiting for response, but triggering a callback
