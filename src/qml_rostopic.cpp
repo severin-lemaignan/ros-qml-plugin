@@ -72,10 +72,12 @@ void IntentTopic::onIncomingData(
 {
   QVariant value = QVariant::fromValue(QString::fromStdString(msg.intent));
   QString data = QString::fromStdString(msg.data);
+  QString modality = QString::fromStdString(msg.modality);
 
-  if (value != _value || data != _data) {
+  if (value != _value || data != _data || modality != _modality) {
     _value = value;
     _data = data;
+    _modality = modality;
     emit onValueChanged();
   }
 
@@ -103,6 +105,7 @@ void IntentTopic::publish()
   hri_actions_msgs::msg::Intent message;
   message.intent = _value.value<QString>().toStdString();
   message.data = _data.toStdString();
+  message.modality = _modality.toStdString();
 
   _publisher->publish(message);
 }

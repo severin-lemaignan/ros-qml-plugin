@@ -100,12 +100,28 @@ class IntentTopic
 {
   Q_OBJECT
   Q_PROPERTY(QString data MEMBER _data)
+  Q_PROPERTY(QString modality MEMBER _modality)
   SHARED_CONSTANT(
     QString, WakeUp,
     QString::fromStdString(hri_actions_msgs::msg::Intent::WAKEUP))
   SHARED_CONSTANT(
     QString, Suspend,
     QString::fromStdString(hri_actions_msgs::msg::Intent::SUSPEND))
+  SHARED_CONSTANT(
+    QString, ModalityTouchscreen,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_TOUCHSCREEN))
+  SHARED_CONSTANT(
+    QString, ModalitySpeech,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_SPEECH))
+  SHARED_CONSTANT(
+    QString, ModalityMotion,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_MOTION))
+  SHARED_CONSTANT(
+    QString, ModalityOther,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_OTHER))
+  SHARED_CONSTANT(
+    QString, ModalityInternal,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_INTERNAL))
 
 public:
   Q_INVOKABLE void publish();
@@ -116,6 +132,7 @@ protected:
 
 private:
   QString _data;
+  QString _modality;
 };
 
 
