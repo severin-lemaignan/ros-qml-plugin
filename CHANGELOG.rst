@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* intent topic: add constants for all intent types
+* expose Intent.modality to the IntentTopic
+* Contributors: Séverin Lemaignan
+
 2.7.0 (2024-10-29)
 ------------------
 * setting remote parameter if it is set in qml on initialization
