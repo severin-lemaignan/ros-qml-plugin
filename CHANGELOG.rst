@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.8.0 (2024-12-12)
+------------------
 * intent topic: add constants for all intent types
 * expose Intent.modality to the IntentTopic
 * Contributors: Séverin Lemaignan
