@@ -18,7 +18,10 @@
 #include <QObject>
 #include <QQuickItem>
 
+#include <memory>
+
 #include <i18n_msgs/srv/get_locales.hpp>
+#include <ui_msgs/srv/set_ui_fragment.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
@@ -26,7 +29,7 @@
 class RosService : public QObjectRos2
 {
   Q_OBJECT
-  Q_PROPERTY(QString service WRITE setService MEMBER _service)
+  Q_PROPERTY(QString service WRITE setService MEMBER _service_name)
 
 public:
   RosService() {}
@@ -35,13 +38,11 @@ public:
   virtual void setService(const QString &) = 0;
 
 signals:
-  void resultReceived();
+  void requestReceived();
 
 protected:
-  QString _service;
+  QString _service_name;
 };
-
-///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
 class RosServiceImpl : public RosService
@@ -53,13 +54,52 @@ public:
   void setService(const QString &);
 
 protected:
-  typename rclcpp::Client<T>::SharedPtr _client;
+  virtual void handle_request(
+    const std::shared_ptr<typename T::Request>,
+    std::shared_ptr<typename T::Response>) {}
+
+  typename rclcpp::Service<T>::SharedPtr _service;
   // rclcpp::CallbackGroup::SharedPtr _cb_group;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class GetLocalesService : public RosServiceImpl<i18n_msgs::srv::GetLocales>
+class RosServiceClient : public QObjectRos2
+{
+  Q_OBJECT
+  Q_PROPERTY(QString service WRITE setService MEMBER _service_name)
+
+public:
+  RosServiceClient() {}
+  virtual ~RosServiceClient() {}
+
+  virtual void setService(const QString &) = 0;
+
+signals:
+  void resultReceived();
+
+protected:
+  QString _service_name;
+};
+
+template<typename T>
+class RosServiceClientImpl : public RosServiceClient
+{
+public:
+  RosServiceClientImpl<T>() {}
+  virtual ~RosServiceClientImpl<T>() {}
+
+  void setService(const QString &);
+
+protected:
+  typename rclcpp::Client<T>::SharedPtr _client;
+  // rclcpp::CallbackGroup::SharedPtr _cb_group;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+class GetLocalesService : public RosServiceClientImpl<i18n_msgs::srv::GetLocales>
 {
   Q_OBJECT
   Q_PROPERTY(QStringList locales MEMBER _locales)
@@ -70,6 +110,23 @@ public:
 private:
   QStringList _locales;
   void handle_response(rclcpp::Client<i18n_msgs::srv::GetLocales>::SharedFuture future);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+class SetUiFragmentService : public RosServiceImpl<ui_msgs::srv::SetUiFragment>
+{
+  Q_OBJECT
+  Q_PROPERTY(QString qml_import_path MEMBER _qml_import_path)
+  Q_PROPERTY(QString qml_fragment MEMBER _qml_fragment)
+
+private:
+  QString _qml_import_path;
+  QString _qml_fragment;
+
+  void handle_request(
+    const std::shared_ptr<ui_msgs::srv::SetUiFragment::Request> request,
+    std::shared_ptr<ui_msgs::srv::SetUiFragment::Response> response) override;
 };
 
 

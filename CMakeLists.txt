@@ -58,6 +58,7 @@ ament_target_dependencies(
   std_msgs
   hri_msgs
   hri_actions_msgs
+  ui_msgs
   i18n_msgs
   Qt5Core
   Qt5Quick

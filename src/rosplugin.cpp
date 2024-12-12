@@ -61,6 +61,8 @@ public:
 
     qmlRegisterType<RosSignal>(uri, 2, 0, "RosSignal");
 
+    qmlRegisterType<SetUiFragmentService>(uri, 2, 0, "SetUiFragmentService");
+
     qmlRegisterType<GetLocalesService>(uri, 2, 0, "GetLocalesService");
 
     qmlRegisterType<SetLocaleAction>(uri, 2, 0, "SetLocaleAction");

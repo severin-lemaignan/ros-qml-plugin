@@ -12,20 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <QQmlEngine>
+#include <QQmlContext>
 #include <chrono>
-
 #include <i18n_msgs/srv/get_locales.hpp>
 
 #include "ros_qml_plugin/qml_rosservice.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
-
 using namespace std::chrono_literals;
-
 
 template<typename T> void RosServiceImpl<T>::setService(const QString & service)
 {
-  if (service == _service) {
+  if (service == _service_name) {
+    return;
+  }
+
+  std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+
+  _service = node->create_service<T>(
+    service.toStdString(), std::bind(
+      &RosServiceImpl<T>::handle_request, this,
+      std::placeholders::_1, std::placeholders::_2), rmw_qos_profile_services_default);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename T> void RosServiceClientImpl<T>::setService(const QString & service)
+{
+  if (service == _service_name) {
     return;
   }
 
@@ -34,6 +50,9 @@ template<typename T> void RosServiceImpl<T>::setService(const QString & service)
   _client = node->create_client<T>(
     service.toStdString(), rmw_qos_profile_services_default);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
 
 void GetLocalesService::callService()
 {
@@ -58,6 +77,7 @@ void GetLocalesService::callService()
     request,
     std::bind(&GetLocalesService::handle_response, this, std::placeholders::_1));
 }
+
 void GetLocalesService::handle_response(
   rclcpp::Client<i18n_msgs::srv::GetLocales>::SharedFuture future)
 {
@@ -72,4 +92,33 @@ void GetLocalesService::handle_response(
   emit resultReceived();
 }
 
-template class RosServiceImpl<i18n_msgs::srv::GetLocales>;
+template class RosServiceClientImpl<i18n_msgs::srv::GetLocales>;
+
+///////////////////////////////////////////////////////////////////////////////
+
+
+void SetUiFragmentService::handle_request(
+  const std::shared_ptr<ui_msgs::srv::SetUiFragment::Request> request,
+  std::shared_ptr<ui_msgs::srv::SetUiFragment::Response> response)
+{
+  _qml_import_path = QString::fromStdString(request->qml_import_path);
+  _qml_fragment = QString::fromStdString(request->qml_fragment);
+
+  // inject the new import path
+  if (!_qml_import_path.isEmpty()) {
+    if (!QQmlEngine::contextForObject(this)) {
+      std::cerr << "No QQmlEngine context for object" << std::endl;
+      return;
+    }
+
+    std::cout << "Adding qml import path:" << _qml_import_path.toStdString() << std::endl;
+    QQmlEngine::contextForObject(this)->engine()->addImportPath(
+      _qml_import_path);
+  }
+
+  response->error_msg = "success";
+
+  emit requestReceived();
+}
+
+template class RosServiceImpl<ui_msgs::srv::SetUiFragment>;
