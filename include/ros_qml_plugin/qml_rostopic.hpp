@@ -100,13 +100,53 @@ class IntentTopic
 {
   Q_OBJECT
   Q_PROPERTY(QString data MEMBER _data)
-  Q_PROPERTY(QString modality MEMBER _modality)
+
+  // intents
   SHARED_CONSTANT(
     QString, WakeUp,
     QString::fromStdString(hri_actions_msgs::msg::Intent::WAKEUP))
   SHARED_CONSTANT(
     QString, Suspend,
     QString::fromStdString(hri_actions_msgs::msg::Intent::SUSPEND))
+  SHARED_CONSTANT(
+    QString, RawUserInput,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::RAW_USER_INPUT))
+  SHARED_CONSTANT(
+    QString, EngageWith,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::ENGAGE_WITH))
+  SHARED_CONSTANT(
+    QString, Guide,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::GUIDE))
+  SHARED_CONSTANT(
+    QString, GrabObject,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::GRAB_OBJECT))
+  SHARED_CONSTANT(
+    QString, BringObject,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::BRING_OBJECT))
+  SHARED_CONSTANT(
+    QString, PlaceObject,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::PLACE_OBJECT))
+  SHARED_CONSTANT(
+    QString, Greet,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::GREET))
+  SHARED_CONSTANT(
+    QString, Say,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::SAY))
+  SHARED_CONSTANT(
+    QString, PresentContent,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::PRESENT_CONTENT))
+  SHARED_CONSTANT(
+    QString, PerformMotion,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::PERFORM_MOTION))
+  SHARED_CONSTANT(
+    QString, StartActivity,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::START_ACTIVITY))
+  SHARED_CONSTANT(
+    QString, StopActivity,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::STOP_ACTIVITY))
+
+  // modalities
+  Q_PROPERTY(QString modality MEMBER _modality)
   SHARED_CONSTANT(
     QString, ModalityTouchscreen,
     QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_TOUCHSCREEN))
