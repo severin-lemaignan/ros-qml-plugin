@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.9.0 (2024-12-17)
+------------------
 * add SetUiFragment service
 * Contributors: Séverin Lemaignan
 
