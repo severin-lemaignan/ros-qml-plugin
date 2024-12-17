@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add SetUiFragment service
+* Contributors: Séverin Lemaignan
+
 2.8.0 (2024-12-12)
 ------------------
 * intent topic: add constants for all intent types
