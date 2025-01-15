@@ -53,6 +53,18 @@ template<typename T> void RosServiceClientImpl<T>::setService(const QString & se
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void SetBoolService::handle_request(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  _value = request->data;
+  response->success = true;
+  emit requestReceived();
+}
+
+template class RosServiceImpl<std_srvs::srv::SetBool>;
+
+///////////////////////////////////////////////////////////////////////////////
 
 void GetLocalesService::callService()
 {

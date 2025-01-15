@@ -20,6 +20,7 @@
 
 #include <memory>
 
+#include <std_srvs/srv/set_bool.hpp>
 #include <i18n_msgs/srv/get_locales.hpp>
 #include <ui_msgs/srv/set_ui_fragment.hpp>
 #include <rclcpp/rclcpp.hpp>
@@ -94,6 +95,22 @@ public:
 protected:
   typename rclcpp::Client<T>::SharedPtr _client;
   // rclcpp::CallbackGroup::SharedPtr _cb_group;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////
+
+class SetBoolService : public RosServiceImpl<std_srvs::srv::SetBool>
+{
+  Q_OBJECT
+  Q_PROPERTY(bool value MEMBER _value)
+
+private:
+  bool _value;
+
+  void handle_request(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response) override;
 };
 
 
