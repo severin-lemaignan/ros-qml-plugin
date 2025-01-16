@@ -74,8 +74,20 @@ public:
   {
     Q_UNUSED(uri);
 
+    QString rosNodeName("qml_ros2_node");
+
     std::cout << "Initializing the ROS 2 node" << std::endl;
-    Ros2Qml::getInstance().init("qml_ros2_node");
+
+    QVariant param = engine->rootContext()->contextProperty("ROSNodeName");
+    if (param.isValid()) {
+      rosNodeName = param.toString();
+      std::cout << "Node name: " << rosNodeName.toStdString() << std::endl;
+    } else {
+      std::cout << "No ROS node name provided, using default: " << rosNodeName.toStdString()
+                << std::endl;
+    }
+
+    Ros2Qml::getInstance().init(rosNodeName);
 
     engine->addImageProvider("rosimage", new RosImageProvider);
   }

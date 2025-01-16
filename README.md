@@ -39,6 +39,16 @@ In your QML files, import `Ros 2.0`:
 import Ros 2.0
 ```
 
+By default, the plugin creates a ROS node with the name `qml_ros2_node`. You can
+change this by setting the `ROSNodeName` property in the QML context:
+
+```cpp
+QQmlApplicationEngine engine;
+
+QString rosNodeName = "robot_head_display";
+engine.rootContext()->setContextProperty("ROSNodeName", rosNodeName);
+```
+
 ### Working 'Hello World' example
 
 This example creates a blank window. If you click anywhere onto the window, the
@@ -92,7 +102,7 @@ Supports:
 - publish and subscribe to string, int16, float32 and bool topics
   (`StringTopic`, `IntTopic`, `FloatTopic`, `BoolTopic`).
   To publish, set the `value` property. To subscribe, use the `onMessageReceived` signal.
-
+- Create a `SetBool` service (`SetBoolService`)
 
 ### Displaying ROS image topics
 
