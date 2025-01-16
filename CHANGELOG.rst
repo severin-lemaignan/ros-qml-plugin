@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add support to set custom ROS node name
+* add SetBoolService to create ROS SetBool service from QML
+* Contributors: Séverin Lemaignan
+
 2.9.0 (2024-12-17)
 ------------------
 * add SetUiFragment service
