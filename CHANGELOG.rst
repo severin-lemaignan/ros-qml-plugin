@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.10.0 (2025-01-16)
+-------------------
 * add support to set custom ROS node name
 * add SetBoolService to create ROS SetBool service from QML
 * Contributors: Séverin Lemaignan
