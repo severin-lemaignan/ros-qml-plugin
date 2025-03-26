@@ -32,6 +32,7 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/string.hpp>
 
 class RosPlugin : public QQmlExtensionPlugin
@@ -49,6 +50,7 @@ public:
       uri, 2, 0,
       "StringTopic");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Int16>>(uri, 2, 0, "IntTopic");
+    qmlRegisterType<RosTopicImpl<std_msgs::msg::Int32>>(uri, 2, 0, "Int32Topic");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::Float32>>(
       uri, 2, 0,
       "FloatTopic");

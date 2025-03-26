@@ -17,6 +17,7 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/float32.hpp>
 #include <std_msgs/msg/int16.hpp>
+#include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/string.hpp>
 
 #include "ros_qml_plugin/qml_rostopic.hpp"
@@ -213,6 +214,7 @@ template<typename T> void RosTopicImpl<T>::publish()
 }
 
 template class RosTopicImpl<std_msgs::msg::Int16>;
+template class RosTopicImpl<std_msgs::msg::Int32>;
 template class RosTopicImpl<std_msgs::msg::Float32>;
 template class RosTopicImpl<std_msgs::msg::Bool>;
 template class RosTopicImpl<std_msgs::msg::String>;
