@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* added int32 subscriber
+* Contributors: ferrangebelli
+
 2.10.0 (2025-01-16)
 -------------------
 * add support to set custom ROS node name
