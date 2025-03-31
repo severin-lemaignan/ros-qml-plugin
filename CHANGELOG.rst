@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.12.0 (2025-03-31)
+-------------------
 * intent topic: add support for 'source' field
 * Contributors: Séverin Lemaignan
 
