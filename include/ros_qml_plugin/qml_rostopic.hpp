@@ -163,6 +163,21 @@ class IntentTopic
     QString, ModalityInternal,
     QString::fromStdString(hri_actions_msgs::msg::Intent::MODALITY_INTERNAL))
 
+  // source
+  Q_PROPERTY(QString source MEMBER _source)
+  SHARED_CONSTANT(
+    QString, SourceRobotItself,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::ROBOT_ITSELF))
+  SHARED_CONSTANT(
+    QString, SourceRemoteSupervisor,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::REMOTE_SUPERVISOR))
+  SHARED_CONSTANT(
+    QString, SourceUnknownAgent,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::UNKNOWN_AGENT))
+  SHARED_CONSTANT(
+    QString, SourceUnknown,
+    QString::fromStdString(hri_actions_msgs::msg::Intent::UNKNOWN))
+
 public:
   Q_INVOKABLE void publish();
 
@@ -173,6 +188,7 @@ protected:
 private:
   QString _data;
   QString _modality;
+  QString _source;
 };
 
 
