@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.13.0 (2025-03-31)
+-------------------
 * expose the properties isSubscriber/isPublisher to control the direction of Topics
   By default, topics are still bidirectional
 * Contributors: Séverin Lemaignan
