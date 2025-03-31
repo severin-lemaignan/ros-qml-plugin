@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* expose the properties isSubscriber/isPublisher to control the direction of Topics
+  By default, topics are still bidirectional
+* Contributors: Séverin Lemaignan
+
 2.12.0 (2025-03-31)
 -------------------
 * intent topic: add support for 'source' field
