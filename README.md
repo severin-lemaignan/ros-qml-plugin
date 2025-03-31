@@ -99,10 +99,28 @@ Supports:
   otherwise it will be set on the QML node itself.
 - bi-directional event signaling (``RosSignal``) by sending an `Empty` message
   on a specfic topic
-- publish and subscribe to string, int16, float32 and bool topics
-  (`StringTopic`, `IntTopic`, `FloatTopic`, `BoolTopic`).
+- publish and subscribe to string, int16, int32, float32 and bool topics
+  (`StringTopic`, `IntTopic`, `Int32Topic`, `FloatTopic`, `BoolTopic`).
   To publish, set the `value` property. To subscribe, use the `onMessageReceived` signal.
 - Create a `SetBool` service (`SetBoolService`)
+
+#### Forcing a topic direction
+
+By default, ROS topic are created as bidirectional. You can force a topic to be
+either a publisher or a subscriber by setting the `isPublisher` and
+`isSubscriber` boolean properties (both are `true` by default).
+
+For instance, the value of `hello_publisher` will be published on the topic
+`/hello`, but will never be overwritten by a message received on the same topic:
+
+```qml
+StringTopic{
+    id: hello_publisher
+    topic: "/hello"
+    value: "Hello world"
+    isSubscriber: false
+}
+```
 
 ### Displaying ROS image topics
 

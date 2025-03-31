@@ -42,6 +42,8 @@ class RosTopic : public QObjectRos2
   Q_OBJECT
   Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
+  Q_PROPERTY(bool isPublisher MEMBER _is_publisher)
+  Q_PROPERTY(bool isSubscriber MEMBER _is_subscriber)
 
 public:
   RosTopic() {}
@@ -58,6 +60,10 @@ signals:
 protected:
   QString _topic;
   QVariant _value;
+
+  // by default, a RosTopic is both a publisher and a subscriber
+  bool _is_publisher = true;
+  bool _is_subscriber = true;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

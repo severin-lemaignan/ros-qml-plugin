@@ -30,6 +30,10 @@ template<>
 void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
   const hri_msgs::msg::Expression & data)
 {
+  if (!_is_subscriber) {
+    return;
+  }
+
   QVariant value = QVariant::fromValue(QString::fromStdString(data.expression));
 
   if (value != _value) {
@@ -46,6 +50,10 @@ void RosTopicImpl<hri_msgs::msg::Expression>::onIncomingData(
 void ClosedCaptionTopic::onIncomingData(
   const hri_actions_msgs::msg::ClosedCaption & data)
 {
+  if (!_is_subscriber) {
+    return;
+  }
+
   QVariant value = QVariant::fromValue(QString::fromStdString(data.text));
   QString speaker_id = QString::fromStdString(data.speaker_id);
 
@@ -71,6 +79,10 @@ void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::onIncomingData(
 void IntentTopic::onIncomingData(
   const hri_actions_msgs::msg::Intent & msg)
 {
+  if (!_is_subscriber) {
+    return;
+  }
+
   QVariant value = QVariant::fromValue(QString::fromStdString(msg.intent));
   QString data = QString::fromStdString(msg.data);
   QString modality = QString::fromStdString(msg.modality);
@@ -99,6 +111,11 @@ void RosTopicImpl<hri_actions_msgs::msg::Intent>::onIncomingData(
 
 void IntentTopic::publish()
 {
+  if (!_is_publisher) {
+    std::cerr << "Calling publish() on a topic marked as non-publisher." << std::endl;
+    return;
+  }
+
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
     return;
@@ -123,6 +140,10 @@ void RosTopicImpl<hri_actions_msgs::msg::Intent>::publish() {}
 
 template<typename T> void RosTopicImpl<T>::onIncomingData(const T & data)
 {
+  if (!_is_subscriber) {
+    return;
+  }
+
   QVariant value;
 
   // special case std::string, as they are not directly convertible to QVariant
@@ -166,11 +187,19 @@ template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
   }
 
   _value = value;
-  publish();
+
+  if (_is_publisher) {
+    publish();
+  }
 }
 
 template<> void RosTopicImpl<hri_msgs::msg::Expression>::publish()
 {
+  if (!_is_publisher) {
+    std::cerr << "Calling publish() on a topic marked as non-publisher." << std::endl;
+    return;
+  }
+
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
     return;
@@ -197,6 +226,11 @@ template<> void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::publish()
 
 template<typename T> void RosTopicImpl<T>::publish()
 {
+  if (!_is_publisher) {
+    std::cerr << "Calling publish() on a topic marked as non-publisher." << std::endl;
+    return;
+  }
+
   if (!_publisher) {
     std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
     return;
