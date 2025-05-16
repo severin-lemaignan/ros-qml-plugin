@@ -171,11 +171,25 @@ template<typename T> void RosTopicImpl<T>::setTopic(const QString & topic)
 
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
-  _subscriber = node->create_subscription<T>(
-    topic.toStdString(), 1,
-    std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
+  if (_is_subscriber) {  // Create the subscriber only if the topic is set to subscribe
+    if (_subscriber) {
+      // Destroy the old subscriber, if it exists. This means that the
+      // topic has been changed, and we need to create a new subscriber.
+      _subscriber.reset();
+    }
+    _subscriber = node->create_subscription<T>(
+      topic.toStdString(), 1,
+      std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
+  }
 
-  _publisher = node->create_publisher<T>(topic.toStdString(), 1);
+  if (_is_publisher) {  // Create the publisher only if the topic is set to publish
+    if (_publisher) {
+      // Destroy the old publisher, if it exists. This means that the
+      // topic has been changed, and we need to create a new publisher.
+      _publisher.reset();
+    }
+    _publisher = node->create_publisher<T>(topic.toStdString(), 1);
+  }
 
   _topic = topic;
 }
@@ -190,6 +204,52 @@ template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
 
   if (_is_publisher) {
     publish();
+  }
+}
+
+template<typename T> void RosTopicImpl<T>::setIsPublisher(const bool & is_publisher)
+{
+  if (is_publisher == _is_publisher) {
+    return;
+  }
+
+  _is_publisher = is_publisher;
+
+  if (!_is_publisher) {
+    if (_publisher) {
+      // Destroy the old publisher, if it exists.
+      _publisher.reset();
+    }
+  } else {
+    // Create the publisher
+    if (!_topic.isEmpty()) {
+      std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+      _publisher = node->create_publisher<T>(_topic.toStdString(), 1);
+    }
+  }
+}
+
+template<typename T> void RosTopicImpl<T>::setIsSubscriber(const bool & is_subscriber)
+{
+  if (is_subscriber == _is_subscriber) {
+    return;
+  }
+
+  _is_subscriber = is_subscriber;
+
+  if (!_is_subscriber) {
+    if (_subscriber) {
+      // Destroy the old subscriber, if it exists.
+      _subscriber.reset();
+    }
+  } else {
+    // Create the subscriber
+    if (!_topic.isEmpty()) {
+      std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+      _subscriber = node->create_subscription<T>(
+        _topic.toStdString(), 1,
+        std::bind(&RosTopicImpl<T>::onIncomingData, this, _1));
+    }
   }
 }
 

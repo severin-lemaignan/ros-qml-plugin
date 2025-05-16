@@ -42,8 +42,8 @@ class RosTopic : public QObjectRos2
   Q_OBJECT
   Q_PROPERTY(QVariant value WRITE setValue MEMBER _value NOTIFY onValueChanged)
   Q_PROPERTY(QString topic WRITE setTopic MEMBER _topic)
-  Q_PROPERTY(bool isPublisher MEMBER _is_publisher)
-  Q_PROPERTY(bool isSubscriber MEMBER _is_subscriber)
+  Q_PROPERTY(bool isPublisher WRITE setIsPublisher MEMBER _is_publisher)
+  Q_PROPERTY(bool isSubscriber WRITE setIsSubscriber MEMBER _is_subscriber)
 
 public:
   RosTopic() {}
@@ -51,6 +51,8 @@ public:
 
   virtual void setTopic(const QString &) = 0;
   virtual void setValue(const QVariant &) = 0;
+  virtual void setIsPublisher(const bool &) = 0;
+  virtual void setIsSubscriber(const bool &) = 0;
   Q_INVOKABLE void publish() {}
 
 signals:
@@ -76,6 +78,8 @@ public:
 
   void setTopic(const QString &);
   void setValue(const QVariant &);
+  void setIsPublisher(const bool &);
+  void setIsSubscriber(const bool &);
   Q_INVOKABLE void publish();
 
 protected:
