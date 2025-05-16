@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.14.0 (2025-05-16)
+-------------------
 * Create the publishers and subscribers only if the isPublisher or isSubscriber are true. Delete them once these variables are set false
 * Contributors: ferrangebelli
 
