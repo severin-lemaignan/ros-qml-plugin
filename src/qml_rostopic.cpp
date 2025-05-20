@@ -201,6 +201,7 @@ template<typename T> void RosTopicImpl<T>::setValue(const QVariant & value)
   }
 
   _value = value;
+  emit onValueChanged();
 
   if (_is_publisher) {
     publish();
