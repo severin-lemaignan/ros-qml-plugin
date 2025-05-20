@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.14.1 (2025-05-20)
+-------------------
 * when setting a topic value from within the QML, emit onValueCHanged
 * Contributors: Séverin Lemaignan
 
