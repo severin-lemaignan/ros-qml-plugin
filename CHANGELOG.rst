@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* subscribe to images using BEST_EFFORT QoS
+* [doc] update the sample.qml file to use current API
+* Contributors: Séverin Lemaignan
+
 2.14.1 (2025-05-20)
 -------------------
 * when setting a topic value from within the QML, emit onValueCHanged
