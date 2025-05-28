@@ -35,6 +35,8 @@
 #include <std_msgs/msg/int32.hpp>
 #include <std_msgs/msg/string.hpp>
 
+#include "ros_qml_plugin/qml_sayskill.hpp"
+
 class RosPlugin : public QQmlExtensionPlugin
 {
   Q_OBJECT
@@ -70,6 +72,8 @@ public:
     qmlRegisterType<GetLocalesService>(uri, 2, 0, "GetLocalesService");
 
     qmlRegisterType<SetLocaleAction>(uri, 2, 0, "SetLocaleAction");
+
+    qmlRegisterType<SaySkill>(uri, 2, 0, "SaySkill");
   }
 
   void initializeEngine(QQmlEngine * engine, const char * uri)

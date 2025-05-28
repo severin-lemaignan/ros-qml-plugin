@@ -23,6 +23,8 @@
   <depend>std_srvs</depend>
   <depend>ui_msgs</depend>
 
+  <depend>communication_skills</depend>
+
   <build_depend>qtbase5-dev</build_depend>
   <build_depend>qtdeclarative5-dev</build_depend>
   <build_depend>qtmultimedia5-dev</build_depend>

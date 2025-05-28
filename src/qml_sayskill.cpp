@@ -1,4 +1,4 @@
-// Copyright (c) 2024 PAL Robotics S.L. All rights reserved.
+// Copyright (c) 2025 PAL Robotics S.L. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <chrono>
-
-#include <i18n_msgs/action/set_locale.hpp>
 
 #include <rclcpp_action/rclcpp_action.hpp>
-#include "ros_qml_plugin/qml_rosaction.hpp"
+#include <communication_skills/action/say.hpp>
+
+#include "ros_qml_plugin/qml_sayskill.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 
-using namespace std::chrono_literals;
 
-
-void SetLocaleAction::sendGoal()
+void SaySkill::sendGoal()
 {
+
+  // if not connected yet, do it now
+  setAction("/say");
+
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   if (!_client) {
@@ -40,23 +41,29 @@ void SetLocaleAction::sendGoal()
     std::cerr << "ROS2 is not ok" << std::endl;
   }
 
-  auto goal_msg = i18n_msgs::action::SetLocale::Goal();
-  goal_msg.locale = _locale.toStdString();
+  auto goal_msg = communication_skills::action::Say::Goal();
+  goal_msg.person_id = _person_id.toStdString();
+  goal_msg.group_id = _group_id.toStdString();
+  goal_msg.input = _input.toStdString();
 
-  auto send_goal_options = rclcpp_action::Client<i18n_msgs::action::SetLocale>::SendGoalOptions();
+  auto send_goal_options =
+    rclcpp_action::Client<communication_skills::action::Say>::SendGoalOptions();
+
   send_goal_options.goal_response_callback = std::bind(
-    &SetLocaleAction::goal_response_callback, this, std::placeholders::_1);
+    &SaySkill::goal_response_callback, this, std::placeholders::_1);
+
   send_goal_options.feedback_callback = std::bind(
-    &SetLocaleAction::feedback_callback, this,
+    &SaySkill::feedback_callback, this,
     std::placeholders::_1, std::placeholders::_2);
+
   send_goal_options.result_callback = std::bind(
-    &SetLocaleAction::result_callback, this, std::placeholders::_1);
+    &SaySkill::result_callback, this, std::placeholders::_1);
 
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
 }
 
-void SetLocaleAction::goal_response_callback(
-  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr goal_handle)
+void SaySkill::goal_response_callback(
+  rclcpp_action::ClientGoalHandle<communication_skills::action::Say>::SharedPtr goal_handle)
 {
   if (!goal_handle) {
     std::cerr << "Goal was rejected by server" << std::endl;
@@ -65,16 +72,16 @@ void SetLocaleAction::goal_response_callback(
   }
 }
 
-void SetLocaleAction::feedback_callback(
-  rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::SharedPtr,
-  const std::shared_ptr<const i18n_msgs::action::SetLocale::Feedback> feedback)
+void SaySkill::feedback_callback(
+  rclcpp_action::ClientGoalHandle<communication_skills::action::Say>::SharedPtr,
+  const std::shared_ptr<const communication_skills::action::Say::Feedback>)
 {
-  _progress = QString::fromStdString(feedback->progress);
+  // TODO: expose feedback data
   emit feedbackReceived();
 }
 
-void SetLocaleAction::result_callback(
-  const rclcpp_action::ClientGoalHandle<i18n_msgs::action::SetLocale>::WrappedResult & result)
+void SaySkill::result_callback(
+  const rclcpp_action::ClientGoalHandle<communication_skills::action::Say>::WrappedResult & result)
 {
   switch (result.code) {
     case rclcpp_action::ResultCode::SUCCEEDED:
@@ -89,8 +96,9 @@ void SetLocaleAction::result_callback(
       std::cerr << "Unknown result code" << std::endl;
       return;
   }
-  _error_msg = QString::fromStdString(result.result->error_msg);
+  _error_msg = QString::fromStdString(result.result->result.error_msg);
+  // TODO: expose error code
   emit resultReceived();
 }
 
-template class RosActionImpl<i18n_msgs::action::SetLocale>;
+template class RosActionImpl<communication_skills::action::Say>;

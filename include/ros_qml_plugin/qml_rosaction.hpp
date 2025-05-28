@@ -24,6 +24,7 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
+#include "ros_qml_plugin/ros2.hpp"
 
 class RosAction : public QObjectRos2
 {
@@ -54,7 +55,19 @@ public:
   RosActionImpl<T>() {}
   virtual ~RosActionImpl<T>() {}
 
-  void setAction(const QString &);
+  void setAction(const QString & action)
+  {
+    if (action == _action) {
+      return;
+    }
+
+    std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+
+    _client = rclcpp_action::create_client<T>(
+      node, action.toStdString());
+
+    std::cout << "Action set" << std::endl;
+  }
 
 protected:
   typename rclcpp_action::Client<T>::SharedPtr _client;
