@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.14.2 (2025-05-28)
+-------------------
 * subscribe to images using BEST_EFFORT QoS
 * [doc] update the sample.qml file to use current API
 * Contributors: Séverin Lemaignan
