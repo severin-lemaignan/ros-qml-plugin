@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add support for the Say skill
+* Contributors: Séverin Lemaignan
+
 2.14.2 (2025-05-28)
 -------------------
 * subscribe to images using BEST_EFFORT QoS
