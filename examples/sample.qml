@@ -31,13 +31,13 @@ Window {
 
         anchors.fill: parent
         opacity: 0.5
-        source: "image://rosimage/image_raw"
+        source: "image://rosimage/camera/image_raw"
 
         Timer {
             interval: 50
             repeat: true
             running: true
-            onTriggered: { img.source = ""; img.source = "image://rosimage/image_raw" }
+            onTriggered: { img.source = ""; img.source = "image://rosimage/camera/image_raw" }
         }
     }
 
@@ -47,15 +47,17 @@ Window {
         anchors.centerIn: parent
     }
 
-    RosStringSubscriber {
+    StringTopic {
         topic: "input"
-        onTextChanged: {
-            label.text = text;
+        isPublisher: false
+        onValueChanged: {
+            label.text = value;
         }
     }
 
-    RosStringPublisher{
+    StringTopic{
         id: hello_publisher
+        isSubscriber: false
         topic: "hello"
 
     }
@@ -72,7 +74,7 @@ Window {
         text: "Click me to publish a string on /hello"
         onClicked: {
             count += 1;
-            hello_publisher.text = "Hello world - click #" + count;
+            hello_publisher.value = "Hello world - click #" + count;
         }
 
     }
