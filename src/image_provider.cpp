@@ -58,13 +58,21 @@ QImage RosImageProvider::requestImage(
   const QSize & requestedSize)
 {
   if (_topic != id.toStdString()) {
-    _topic = id.toStdString();
+    _topic = std::string("/") + id.toStdString();
     std::cout << "Subscribing to image topic " << _topic << std::endl;
 
-    auto it = Ros2Qml::getInstance().image_transport();
+    auto node = Ros2Qml::getInstance().node();
 
     _sub = std::make_shared<image_transport::Subscriber>(
-      it->subscribe(_topic, 1, &RosImageProvider::imageCallback, this));
+      image_transport::create_subscription(
+        node.get(),
+        _topic,
+        std::bind(&RosImageProvider::imageCallback, this, std::placeholders::_1),
+        "compressed",
+        rmw_qos_profile_sensor_data
+      )
+    );
+
   }
 
   // cout << "Image requested" << endl;
