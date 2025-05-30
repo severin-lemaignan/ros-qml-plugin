@@ -72,7 +72,6 @@ QImage RosImageProvider::requestImage(
         rmw_qos_profile_sensor_data
       )
     );
-
   }
 
   // cout << "Image requested" << endl;

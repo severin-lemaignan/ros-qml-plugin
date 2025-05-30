@@ -22,8 +22,6 @@
 
 void SaySkill::say(QString input)
 {
-
-
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   if (!_client) {
@@ -76,7 +74,7 @@ void SaySkill::feedback_callback(
   rclcpp_action::ClientGoalHandle<communication_skills::action::Say>::SharedPtr,
   const std::shared_ptr<const communication_skills::action::Say::Feedback>)
 {
-  // TODO: expose feedback data
+  // TODO(SLE): expose feedback data
   emit feedbackReceived();
 }
 
@@ -97,7 +95,7 @@ void SaySkill::result_callback(
       return;
   }
   _error_msg = QString::fromStdString(result.result->result.error_msg);
-  // TODO: expose error code
+  // TODO(SLE): expose error code
   emit resultReceived();
 }
 
