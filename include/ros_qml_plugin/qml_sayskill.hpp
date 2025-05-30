@@ -31,16 +31,14 @@ class SaySkill : public RosActionImpl<communication_skills::action::Say>
   Q_OBJECT
   Q_PROPERTY(QString personId MEMBER _person_id)
   Q_PROPERTY(QString groupId MEMBER _group_id)
-  Q_PROPERTY(QString input MEMBER _input)
   Q_PROPERTY(QString errorMsg MEMBER _error_msg)
 
 public:
-  Q_INVOKABLE void sendGoal();
+  Q_INVOKABLE void say(QString input);
 
 private:
   QString _person_id;
   QString _group_id;
-  QString _input;
   QString _error_msg;
 
   void goal_response_callback(

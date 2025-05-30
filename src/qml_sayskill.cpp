@@ -20,31 +20,31 @@
 #include "ros_qml_plugin/ros2.hpp"
 
 
-void SaySkill::sendGoal()
+void SaySkill::say(QString input)
 {
 
-  // if not connected yet, do it now
-  setAction("/say");
 
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   if (!_client) {
-    std::cerr << "Action called without a client." << std::endl;
+    // if not connected yet, do it now
+    setAction("/say");
+  }
+
+  // if still not conencted, return
+  if (!_client) {
+    std::cerr << "Unable to connect to the Say skill." << std::endl;
     return;
   }
 
   if (!_client->wait_for_action_server()) {
-    std::cerr << "Action server not available" << std::endl;
-  }
-
-  if (!rclcpp::ok()) {
-    std::cerr << "ROS2 is not ok" << std::endl;
+    std::cerr << "Say skill server not available" << std::endl;
   }
 
   auto goal_msg = communication_skills::action::Say::Goal();
   goal_msg.person_id = _person_id.toStdString();
   goal_msg.group_id = _group_id.toStdString();
-  goal_msg.input = _input.toStdString();
+  goal_msg.input = input.toStdString();
 
   auto send_goal_options =
     rclcpp_action::Client<communication_skills::action::Say>::SendGoalOptions();
