@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.16.0 (2025-05-30)
+-------------------
 * linting
 * Say skill: expose a 'say' method
 * Contributors: Séverin Lemaignan
