@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add image_transport_plugins as an exec_depend
+  otherwise, the QML engine will crash at runtime, as rosimage provider expects compressed video streams
+* Contributors: Séverin Lemaignan
+
 2.15.0 (2025-05-28)
 -------------------
 * add support for the Say skill
