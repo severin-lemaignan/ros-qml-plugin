@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linting
+* Say skill: expose a 'say' method
+* Contributors: Séverin Lemaignan
+
 2.15.1 (2025-05-30)
 -------------------
 * add image_transport_plugins as an exec_depend
