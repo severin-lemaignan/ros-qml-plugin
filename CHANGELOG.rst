@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* {/say -- /skill/say}
+* Contributors: Séverin Lemaignan
+
 2.16.0 (2025-05-30)
 -------------------
 * linting
