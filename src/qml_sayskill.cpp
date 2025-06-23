@@ -26,7 +26,7 @@ void SaySkill::say(QString input)
 
   if (!_client) {
     // if not connected yet, do it now
-    setAction("/say");
+    setAction("/skill/say");
   }
 
   // if still not conencted, return
