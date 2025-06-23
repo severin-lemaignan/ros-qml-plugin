@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.17.0 (2025-06-23)
+-------------------
 * {/say -- /skill/say}
 * Contributors: Séverin Lemaignan
 
