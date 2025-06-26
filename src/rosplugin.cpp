@@ -36,6 +36,7 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "ros_qml_plugin/qml_sayskill.hpp"
+#include "ros_qml_plugin/qml_set_expression_skill.hpp"
 
 class RosPlugin : public QQmlExtensionPlugin
 {
@@ -74,6 +75,7 @@ public:
     qmlRegisterType<SetLocaleAction>(uri, 2, 0, "SetLocaleAction");
 
     qmlRegisterType<SaySkill>(uri, 2, 0, "SaySkill");
+    qmlRegisterType<SetExpressionSkill>(uri, 2, 0, "SetExpressionSkill");
   }
 
   void initializeEngine(QQmlEngine * engine, const char * uri)

@@ -25,6 +25,7 @@
   <depend>ui_msgs</depend>
 
   <depend>communication_skills</depend>
+  <depend>interaction_skills</depend>
 
   <build_depend>qtbase5-dev</build_depend>
   <build_depend>qtdeclarative5-dev</build_depend>
