@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linter
+* Contributors: Séverin Lemaignan
+
 2.18.0 (2025-06-26)
 -------------------
 * expose SetExpressionSkill
