@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROS_QML_PLUGIN__QML_SETEXPRESSIONSKILL_HPP_
-#define ROS_QML_PLUGIN__QML_SETEXPRESSIONSKILL_HPP_
+#ifndef ROS_QML_PLUGIN__QML_SET_EXPRESSION_SKILL_HPP_
+#define ROS_QML_PLUGIN__QML_SET_EXPRESSION_SKILL_HPP_
 
 #include <QObject>
 #include <QQuickItem>
@@ -22,7 +22,6 @@
 #include <interaction_skills/msg/set_expression.hpp>
 #include <rclcpp/rclcpp.hpp>
 
-#include "ros_qml_plugin/qobject_ros2.hpp"
 #include "ros_qml_plugin/qobject_ros2.hpp"
 
 class SetExpressionSkill : public QObjectRos2
@@ -36,8 +35,6 @@ public:
 
 private:
   typename rclcpp::Publisher<interaction_skills::msg::SetExpression>::SharedPtr _publisher;
-
 };
 
-
-#endif  // ROS_QML_PLUGIN__QML_SETEXPRESSIONSKILL_HPP_
+#endif  // ROS_QML_PLUGIN__QML_SET_EXPRESSION_SKILL_HPP_

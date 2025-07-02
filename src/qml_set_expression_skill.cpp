@@ -31,7 +31,6 @@ void SetExpressionSkill::set_expression(QString expression)
   message.expression.expression = expression.toStdString();
 
   _publisher->publish(message);
-
 }
 
 void SetExpressionSkill::set_expression(float valence, float arousal)
