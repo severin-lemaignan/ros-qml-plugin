@@ -37,6 +37,7 @@
 
 #include "ros_qml_plugin/qml_sayskill.hpp"
 #include "ros_qml_plugin/qml_set_expression_skill.hpp"
+#include "ros_qml_plugin/qml_look_at_skill.hpp"
 
 class RosPlugin : public QQmlExtensionPlugin
 {
@@ -76,6 +77,8 @@ public:
 
     qmlRegisterType<SaySkill>(uri, 2, 0, "SaySkill");
     qmlRegisterType<SetExpressionSkill>(uri, 2, 0, "SetExpressionSkill");
+    qmlRegisterType<RosPoint>(uri, 2, 0, "RosPoint");
+    qmlRegisterType<LookAtSkill>(uri, 2, 0, "LookAtSkill");
   }
 
   void initializeEngine(QQmlEngine * engine, const char * uri)

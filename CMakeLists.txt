@@ -36,6 +36,8 @@ set(SOURCES
     src/qml_rosservice.cpp
     include/ros_qml_plugin/qml_rosaction.hpp
     src/qml_rosaction.cpp
+    include/ros_qml_plugin/qml_look_at_skill.hpp
+    src/qml_look_at_skill.cpp
     include/ros_qml_plugin/qml_sayskill.hpp
     src/qml_sayskill.cpp
     include/ros_qml_plugin/qml_set_expression_skill.hpp
@@ -67,6 +69,7 @@ ament_target_dependencies(
   std_srvs
   communication_skills
   interaction_skills
+  geometry_msgs
   Qt5Core
   Qt5Quick
   Qt5Qml
