@@ -22,39 +22,14 @@
 #include <interaction_skills/action/look_at.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
-#include <geometry_msgs/msg/point_stamped.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
 #include "ros_qml_plugin/qml_rosaction.hpp"
 
+
 #define SHARED_CONSTANT(type, name, value) \
-  Q_PROPERTY(type name READ name CONSTANT) \
-  type name() const {return value;}
-
-class RosPoint : public QObject
-{
-  Q_OBJECT
-  Q_PROPERTY(QString frame MEMBER _frame)
-  Q_PROPERTY(double x MEMBER _x)
-  Q_PROPERTY(double y MEMBER _y)
-  Q_PROPERTY(double z MEMBER _z)
-
-public:
-  QString _frame;
-  double _x;
-  double _y;
-  double _z;
-
-  geometry_msgs::msg::PointStamped toMsg() const
-  {
-    geometry_msgs::msg::PointStamped point;
-    point.header.frame_id = _frame.toStdString();
-    point.point.x = _x;
-    point.point.y = _y;
-    point.point.z = _z;
-    return point;
-  }
-};
+        Q_PROPERTY(type name READ name CONSTANT) \
+        type name() const {return value;}
 
 
 class LookAtSkill : public RosActionImpl<interaction_skills::action::LookAt>
@@ -80,10 +55,11 @@ class LookAtSkill : public RosActionImpl<interaction_skills::action::LookAt>
     QString::fromStdString(interaction_skills::action::LookAt::Goal::GLANCE))
 
 public:
-  Q_INVOKABLE void look_at(const RosPoint * target, const QString & policy = "");
-  Q_INVOKABLE void glance(const RosPoint * target);
+  Q_INVOKABLE void look_at(QVariant target, const QString & policy = "");
+  Q_INVOKABLE void glance(QVariant target);
   Q_INVOKABLE void look_at_faces();
   Q_INVOKABLE void look_around_randomly();
+  Q_INVOKABLE void reset();
 
 private:
   QString _error_msg;

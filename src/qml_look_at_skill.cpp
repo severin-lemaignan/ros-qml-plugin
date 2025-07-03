@@ -17,11 +17,13 @@
 
 #include "ros_qml_plugin/qml_look_at_skill.hpp"
 #include "ros_qml_plugin/ros2.hpp"
+#include "ros_qml_plugin/ros_point.hpp"
 
 
-void LookAtSkill::look_at(const RosPoint * target, const QString & policy)
+void LookAtSkill::look_at(QVariant v_target, const QString & policy)
 {
   using namespace std::placeholders;
+
 
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
@@ -42,8 +44,17 @@ void LookAtSkill::look_at(const RosPoint * target, const QString & policy)
 
   auto goal_msg = interaction_skills::action::LookAt::Goal();
   goal_msg.policy = policy.toStdString();
-  if (target) {
-    goal_msg.target = target->toMsg();
+
+  // v_target invalid means that no target is set, which is fine (some
+  // policies do not require a target)
+  if (v_target.isValid()) {
+    if (v_target.canConvert<RosPoint>()) {
+      RosPoint target = v_target.value<RosPoint>();
+      goal_msg.target = target.toMsg();
+    } else {
+      qWarning() << "Invalid point type passed look_at";
+      return;
+    }
   }
 
   auto send_goal_options =
@@ -58,10 +69,12 @@ void LookAtSkill::look_at(const RosPoint * target, const QString & policy)
   send_goal_options.result_callback = std::bind(
     &LookAtSkill::result_callback, this, _1);
 
+  qInfo() << "Sending LookAt goal with policy " << policy << " and target "
+          << v_target.toString();
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
 }
 
-void LookAtSkill::glance(const RosPoint * target)
+void LookAtSkill::glance(QVariant target)
 {
   look_at(
     target,
@@ -71,15 +84,22 @@ void LookAtSkill::glance(const RosPoint * target)
 void LookAtSkill::look_at_faces()
 {
   look_at(
-    nullptr,
+    QVariant(),
     QString::fromStdString(interaction_skills::action::LookAt::Goal::SOCIAL));
 }
 
 void LookAtSkill::look_around_randomly()
 {
   look_at(
-    nullptr,
+    QVariant(),
     QString::fromStdString(interaction_skills::action::LookAt::Goal::RANDOM));
+}
+
+void LookAtSkill::reset()
+{
+  look_at(
+    QVariant(),
+    QString::fromStdString(interaction_skills::action::LookAt::Goal::RESET));
 }
 
 

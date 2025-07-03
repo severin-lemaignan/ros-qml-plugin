@@ -122,6 +122,43 @@ StringTopic{
 }
 ```
 
+### Skills
+
+Supported skills:
+
+- `SaySkill`: a skill that can be used to make the robot say something.
+  
+  Example:
+  ```qml
+  SaySkill {
+      id: skill
+  }
+  skill.say("Hello world")
+  ```
+- `SetExpression`: a skill that can be used to set an expression on the robot.
+  
+  Example:
+  ```qml
+  SetExpression {
+      id: skill
+  }
+  skill.set_expression("happy")
+  skill.set_expression(0.7, -0.4) // using valence and arousal values
+  ```
+- `LookAtSkill`: a skill that can be used to make the robot look at a specific point in space.
+  
+  Example:
+  ```qml
+  LookAtSkill {
+      id: skill
+  }
+  skill.look_at(Ros.point("base_link", 1.0, 0.0, 0.0))
+  skill.look_at_faces()
+  skill.look_around_randomly()
+  skill.glance(Ros.point("base_link", 1.0, 0.0, 0.0), 1000) // glance at a point for 2 second
+  skill.reset() // look straight ahead
+  ```
+
 ### Displaying ROS image topics
 
 This uses a special QML ``ImageProvider`` to read images from a ROS topic. Specify the topic using: `img.source = "image://rosimage/<your topic>"`.

@@ -20,6 +20,8 @@
 #include <thread>
 #include <vector>
 
+#include "ros_qml_plugin/ros.hpp"
+#include "ros_qml_plugin/ros_point.hpp"
 #include "image_provider.hpp"
 #include "ros_qml_plugin/qml_rosparam.hpp"
 #include "ros_qml_plugin/qml_rossignal.hpp"
@@ -49,6 +51,8 @@ public:
   {
     Q_ASSERT(uri == QLatin1String("Ros"));
 
+    qRegisterMetaType<RosPoint>("RosPoint");
+
     qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::String>>(
       uri, 2, 0,
@@ -77,7 +81,6 @@ public:
 
     qmlRegisterType<SaySkill>(uri, 2, 0, "SaySkill");
     qmlRegisterType<SetExpressionSkill>(uri, 2, 0, "SetExpressionSkill");
-    qmlRegisterType<RosPoint>(uri, 2, 0, "RosPoint");
     qmlRegisterType<LookAtSkill>(uri, 2, 0, "LookAtSkill");
   }
 
@@ -99,6 +102,9 @@ public:
     }
 
     Ros2Qml::getInstance().init(rosNodeName);
+
+    static Ros rosSingleton;
+    engine->rootContext()->setContextProperty("Ros", &rosSingleton);
 
     engine->addImageProvider("rosimage", new RosImageProvider);
   }

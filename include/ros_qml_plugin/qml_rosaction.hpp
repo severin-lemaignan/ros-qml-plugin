@@ -65,8 +65,6 @@ public:
 
     _client = rclcpp_action::create_client<T>(
       node, action.toStdString());
-
-    std::cout << "Action set" << std::endl;
   }
 
 protected:

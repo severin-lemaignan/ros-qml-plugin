@@ -48,6 +48,8 @@ set(SOURCES
     src/qml_set_expression_skill.cpp
     include/ros_qml_plugin/qobject_ros2.hpp
     include/ros_qml_plugin/ros2.hpp
+    include/ros_qml_plugin/ros.hpp
+    include/ros_qml_plugin/ros_point.hpp
     src/rosplugin.cpp
     src/image_provider.cpp
     src/ros2.cpp
