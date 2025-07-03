@@ -28,8 +28,8 @@
 
 
 #define SHARED_CONSTANT(type, name, value) \
-        Q_PROPERTY(type name READ name CONSTANT) \
-        type name() const {return value;}
+  Q_PROPERTY(type name READ name CONSTANT) \
+  type name() const {return value;}
 
 
 class LookAtSkill : public RosActionImpl<interaction_skills::action::LookAt>
