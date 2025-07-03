@@ -53,6 +53,12 @@ public:
 
     qRegisterMetaType<RosPoint>("RosPoint");
 
+    qmlRegisterSingletonType<Ros>(
+      uri, 2, 0, "Ros", [](QQmlEngine * engine, QJSEngine *) -> QObject * {
+        Q_UNUSED(engine);
+        return new Ros();
+      });
+
     qmlRegisterType<RosParam>(uri, 2, 0, "RosParam");
     qmlRegisterType<RosTopicImpl<std_msgs::msg::String>>(
       uri, 2, 0,
@@ -102,9 +108,6 @@ public:
     }
 
     Ros2Qml::getInstance().init(rosNodeName);
-
-    static Ros rosSingleton;
-    engine->rootContext()->setContextProperty("Ros", &rosSingleton);
 
     engine->addImageProvider("rosimage", new RosImageProvider);
   }
