@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.19.0 (2025-07-03)
+-------------------
 * linting
 * improve logging
 * change how the Ros singleton is created, to make it possible to import it from JS modules in QML
