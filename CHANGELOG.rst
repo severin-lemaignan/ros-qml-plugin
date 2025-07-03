@@ -2,6 +2,17 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linting
+* improve logging
+* change how the Ros singleton is created, to make it possible to import it from JS modules in QML
+* improve API of look_at skill
+  ROS PointStamped are created and passed with: Ros.point(frame,x,y,z)
+* disable float-equal warnings -- Qt MOC generates code that triggers that warning
+* implement the 'look_at' skill
+* Contributors: Séverin Lemaignan
+
 2.18.1 (2025-07-02)
 -------------------
 * linter
