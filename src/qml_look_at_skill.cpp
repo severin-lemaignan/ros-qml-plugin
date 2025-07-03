@@ -69,8 +69,20 @@ void LookAtSkill::look_at(QVariant v_target, const QString & policy)
   send_goal_options.result_callback = std::bind(
     &LookAtSkill::result_callback, this, _1);
 
-  qInfo() << "Sending LookAt goal with policy " << policy << " and target "
-          << v_target.toString();
+  if (v_target.isValid()) {
+    if (!policy.isEmpty()) {
+      qInfo() << "Sending LookAt goal with policy " << policy << " and target <" <<
+        goal_msg.target.point.x << ", " <<
+        goal_msg.target.point.y << ", " << goal_msg.target.point.z << "> in " <<
+        QString::fromStdString(goal_msg.target.header.frame_id);
+    } else {
+      qInfo() << "Sending LookAt goal to track <" << goal_msg.target.point.x << ", " <<
+        goal_msg.target.point.y << ", " << goal_msg.target.point.z << "> in " <<
+        QString::fromStdString(goal_msg.target.header.frame_id);
+    }
+  } else {
+    qInfo() << "Sending LookAt goal with policy " << policy << " (no target frame)";
+  }
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
 }
 
