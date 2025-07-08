@@ -57,8 +57,22 @@ QImage RosImageProvider::requestImage(
   const QString & id, QSize * size,
   const QSize & requestedSize)
 {
-  if (_topic != id.toStdString()) {
-    _topic = std::string("/") + id.toStdString();
+
+  // remove '?' and everything after it, if present
+  QString topic = id;
+  int questionMarkIndex = topic.indexOf('?');
+  if (questionMarkIndex != -1) {
+    topic = topic.left(questionMarkIndex);
+  }
+
+  // if topic does not start with '/', prepend it
+  if (!topic.startsWith('/')) {
+    topic.prepend('/');
+  }
+
+
+  if (_topic != topic.toStdString()) {
+    _topic = topic.toStdString();
     std::cout << "Subscribing to image topic " << _topic << std::endl;
 
     auto node = Ros2Qml::getInstance().node();
@@ -74,17 +88,19 @@ QImage RosImageProvider::requestImage(
     );
   }
 
-  // cout << "Image requested" << endl;
+  // std::cout << "Image requested" << std::endl;
 
   QImage result;
 
-  // cout << "Last image: " << _last_image.width() << "x" <<
-  // _last_image.height()
-  //      << ")" << endl;
+  // std::cout << "Last image: " << _last_image.width() << "x" <<
+  //  _last_image.height() << ")" << std::endl;
 
   if (requestedSize.isValid()) {
+    // std::cout << "(resizing image to " << requestedSize.width() << "x" <<
+    //  requestedSize.height() << ")" << std::endl;
     result = _last_image.scaled(requestedSize, Qt::KeepAspectRatio);
   } else {
+    // std::cout << "(not resizing image)" << std::endl;
     result = _last_image;
   }
 

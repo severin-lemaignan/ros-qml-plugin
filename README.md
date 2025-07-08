@@ -172,14 +172,15 @@ Image {
 	id: img
 	cache: false
 
+    property int counter: 0
 	anchors.fill: parent
-	source: "image://rosimage/v4l/camera/image_raw"
+	source: "image://rosimage/v4l/camera/image_raw?" + counter.toString()
 
 	Timer {
 		interval: 50
 		repeat: true
-		running: true
-		onTriggered: { img.source = ""; img.source = "image://rosimage/v4l/camera/image_raw" }
+		running: parent.visible
+		onTriggered: parent.counter += 1
 	}
 }
 ```
