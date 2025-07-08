@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.19.1 (2025-07-08)
+-------------------
 * ROS image provider: allows (and trims) '?...' after the topic name
   Useful to force QML to reload the image source
 * Contributors: Séverin Lemaignan
