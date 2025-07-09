@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.19.2 (2025-07-09)
+-------------------
 * linting
 * Contributors: Séverin Lemaignan
 
