@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linting
+* Contributors: Séverin Lemaignan
+
 2.19.1 (2025-07-08)
 -------------------
 * ROS image provider: allows (and trims) '?...' after the topic name
