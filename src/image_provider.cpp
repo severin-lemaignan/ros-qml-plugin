@@ -57,7 +57,6 @@ QImage RosImageProvider::requestImage(
   const QString & id, QSize * size,
   const QSize & requestedSize)
 {
-
   // remove '?' and everything after it, if present
   QString topic = id;
   int questionMarkIndex = topic.indexOf('?');
