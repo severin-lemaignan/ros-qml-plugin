@@ -21,7 +21,7 @@
 #include <vector>
 
 #include "ros_qml_plugin/ros.hpp"
-#include "ros_qml_plugin/ros_point.hpp"
+#include "ros_qml_plugin/ros_types.hpp"
 #include "image_provider.hpp"
 #include "ros_qml_plugin/qml_rosparam.hpp"
 #include "ros_qml_plugin/qml_rossignal.hpp"
@@ -40,6 +40,7 @@
 #include "ros_qml_plugin/qml_sayskill.hpp"
 #include "ros_qml_plugin/qml_set_expression_skill.hpp"
 #include "ros_qml_plugin/qml_look_at_skill.hpp"
+#include "ros_qml_plugin/qml_navigate_skill.hpp"
 
 class RosPlugin : public QQmlExtensionPlugin
 {
@@ -52,6 +53,7 @@ public:
     Q_ASSERT(uri == QLatin1String("Ros"));
 
     qRegisterMetaType<RosPoint>("RosPoint");
+    qRegisterMetaType<RosPose>("RosPose");
 
     qmlRegisterSingletonType<Ros>(
       uri, 2, 0, "Ros", [](QQmlEngine * engine, QJSEngine *) -> QObject * {
@@ -88,6 +90,7 @@ public:
     qmlRegisterType<SaySkill>(uri, 2, 0, "SaySkill");
     qmlRegisterType<SetExpressionSkill>(uri, 2, 0, "SetExpressionSkill");
     qmlRegisterType<LookAtSkill>(uri, 2, 0, "LookAtSkill");
+    qmlRegisterType<NavigateToPoseSkill>(uri, 2, 0, "NavigateToPoseSkill");
   }
 
   void initializeEngine(QQmlEngine * engine, const char * uri)

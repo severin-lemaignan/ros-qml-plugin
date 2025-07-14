@@ -27,6 +27,7 @@
 
   <depend>communication_skills</depend>
   <depend>interaction_skills</depend>
+  <depend>navigation_skills</depend>
   <depend>geometry_msgs</depend>
 
   <build_depend>qtbase5-dev</build_depend>

@@ -17,7 +17,7 @@
 
 #include "ros_qml_plugin/qml_look_at_skill.hpp"
 #include "ros_qml_plugin/ros2.hpp"
-#include "ros_qml_plugin/ros_point.hpp"
+#include "ros_qml_plugin/ros_types.hpp"
 
 
 void LookAtSkill::look_at(QVariant v_target, const QString & policy)

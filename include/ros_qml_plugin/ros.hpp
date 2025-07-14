@@ -16,7 +16,7 @@
 
 #include <QObject>
 #include <QVariant>
-#include "ros_qml_plugin/ros_point.hpp"
+#include "ros_qml_plugin/ros_types.hpp"
 
 /** Singleton class to provide a QML interface for ROS functionality.
  * This class allows creating ROS points and can be extended to include more
@@ -33,5 +33,17 @@ public:
   Q_INVOKABLE QVariant point(const QString & frame, double x, double y, double z)
   {
     return QVariant::fromValue(RosPoint(frame, x, y, z));
+  }
+
+  Q_INVOKABLE QVariant pose(const QString & frame, double x, double y, double z)
+  {
+    return QVariant::fromValue(RosPose(frame, x, y, z));
+  }
+
+  Q_INVOKABLE QVariant pose(
+    const QString & frame, double x, double y, double z, double qx,
+    double qy, double qz, double qw)
+  {
+    return QVariant::fromValue(RosPose(frame, x, y, z, qx, qy, qz, qw));
   }
 };

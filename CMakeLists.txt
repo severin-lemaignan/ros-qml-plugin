@@ -46,10 +46,12 @@ set(SOURCES
     src/qml_sayskill.cpp
     include/ros_qml_plugin/qml_set_expression_skill.hpp
     src/qml_set_expression_skill.cpp
+    include/ros_qml_plugin/qml_navigate_skill.hpp
+    src/qml_navigate_skill.cpp
     include/ros_qml_plugin/qobject_ros2.hpp
     include/ros_qml_plugin/ros2.hpp
     include/ros_qml_plugin/ros.hpp
-    include/ros_qml_plugin/ros_point.hpp
+    include/ros_qml_plugin/ros_types.hpp
     src/rosplugin.cpp
     src/image_provider.cpp
     src/ros2.cpp
@@ -75,6 +77,7 @@ ament_target_dependencies(
   std_srvs
   communication_skills
   interaction_skills
+  navigation_skills
   geometry_msgs
   Qt5Core
   Qt5Quick
