@@ -75,6 +75,7 @@ public:
       uri, 2, 0,
       "ExpressionTopic");
     qmlRegisterType<ClosedCaptionTopic>(uri, 2, 0, "ClosedCaptionTopic");
+    qmlRegisterType<LiveSpeechTopic>(uri, 2, 0, "LiveSpeechTopic");
     qmlRegisterType<IntentTopic>(uri, 2, 0, "IntentTopic");
 
     qmlRegisterType<RosSignal>(uri, 2, 0, "RosSignal");

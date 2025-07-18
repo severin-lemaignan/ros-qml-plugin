@@ -171,6 +171,28 @@ Supported skills:
   skill.navigate_to_pose(Ros.pose("map", 1.0, 0.0, 0.0)) // using only the position
   ```
 
+### Live speech
+
+The `LiveSpeechTopic` QML object can be used to either listen to incoming ASR results, or fake
+speech recognition by publishing a `value`. The API is compatible with the ROS4HRI standard.
+
+```qml
+import Ros 2.0
+LiveSpeechTopic {
+    id: live_speech
+    speaker_name: "joe" // by default, 'anonymous_speaker'
+    onMessageReceived: {
+        console.log("ASR result: " + message)
+    }
+}
+MouseArea {
+    anchors.fill: parent
+    onClicked: {
+        live_speech.value = "Hello world"
+    }
+}
+```
+
 ### Displaying ROS image topics
 
 This uses a special QML ``ImageProvider`` to read images from a ROS topic. Specify the topic using: `img.source = "image://rosimage/<your topic>"`.

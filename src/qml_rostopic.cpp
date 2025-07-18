@@ -75,6 +75,97 @@ template<>
 void RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>::onIncomingData(
   const hri_actions_msgs::msg::ClosedCaption &) {}
 
+///////////////////////////////////////////////////////////
+// specialization for hri_msgs::msg::LiveSpeech
+void LiveSpeechTopic::onIncomingData(
+  const hri_msgs::msg::LiveSpeech & data)
+{
+  if (!_is_subscriber) {
+    return;
+  }
+
+  QVariant value = QVariant::fromValue(QString::fromStdString(data.final));
+  QString incremental = QString::fromStdString(data.incremental);
+  double confidence = data.confidence;
+  QString locale = QString::fromStdString(data.locale);
+
+  setValue(value); // emits onValueChanged() if value changed
+
+  if (incremental != _incremental) {
+    _incremental = incremental;
+    emit onIncrementalChanged();
+  }
+
+  _confidence = confidence;
+  _locale = locale;
+
+  // always emit the signal to signal a message has been received, even if the
+  // value did not change
+  emit messageReceived();
+}
+
+template<>
+void RosTopicImpl<hri_msgs::msg::LiveSpeech>::onIncomingData(
+  const hri_msgs::msg::LiveSpeech &) {}
+
+void LiveSpeechTopic::publish()
+{
+  if (!_is_publisher) {
+    std::cerr << "Calling publish() on a topic marked as non-publisher." << std::endl;
+    return;
+  }
+
+  if (_speaker_name.isEmpty()) {
+    setSpeakerName("anonymous_speaker");
+  }
+
+  if (!_publisher) {
+    std::cerr << "LiveSpeechTopic.publish() called without a publisher." << std::endl;
+    return;
+  }
+
+  if (std::string(_publisher->get_topic_name()).empty()) {
+    std::cerr << "LiveSpeechTopic.publish() called without any topic." << std::endl;
+    return;
+  }
+
+  if (!_user_id_publisher) {
+    // Destroy the old publisher, if it exists. This means that the
+    // topic has been changed, and we need to create a new publisher.
+    std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+    _user_id_publisher = node->create_publisher<hri_msgs::msg::IdsList>(
+      "/humans/voices/tracked",
+      1);
+  }
+
+  hri_msgs::msg::IdsList user_ids;
+  user_ids.ids.push_back(_speaker_name.toStdString());
+  _user_id_publisher->publish(user_ids);
+
+  hri_msgs::msg::LiveSpeech message;
+  message.final = _value.value<QString>().toStdString();
+  message.incremental = _incremental.toStdString();
+  message.confidence = _confidence;
+  message.locale = _locale.toStdString();
+
+  _publisher->publish(message);
+}
+
+template<>
+void RosTopicImpl<hri_msgs::msg::LiveSpeech>::publish() {}
+
+void LiveSpeechTopic::setSpeakerName(const QString & speaker_name)
+{
+  if (speaker_name == _speaker_name) {
+    return;
+  }
+
+  _speaker_name = speaker_name;
+
+  setTopic("/humans/voices/" + _speaker_name + "/speech");
+}
+
+///////////////////////////////////////////////////////////////
 // specialization for hri_actions_msgs::msg::Intent
 void IntentTopic::onIncomingData(
   const hri_actions_msgs::msg::Intent & msg)
@@ -117,12 +208,12 @@ void IntentTopic::publish()
   }
 
   if (!_publisher) {
-    std::cerr << "RosTopic.publish() called without a publisher." << std::endl;
+    std::cerr << "IntentTopic.publish() called without a publisher." << std::endl;
     return;
   }
 
   if (std::string(_publisher->get_topic_name()).empty()) {
-    std::cerr << "RosTopic.publish() called without any topic." << std::endl;
+    std::cerr << "IntentTopic.publish() called without any topic." << std::endl;
     return;
   }
 
@@ -138,6 +229,7 @@ void IntentTopic::publish()
 template<>
 void RosTopicImpl<hri_actions_msgs::msg::Intent>::publish() {}
 
+///////////////////////////////////////////////////////////////////////////////
 template<typename T> void RosTopicImpl<T>::onIncomingData(const T & data)
 {
   if (!_is_subscriber) {
@@ -322,4 +414,5 @@ template class RosTopicImpl<std_msgs::msg::Bool>;
 template class RosTopicImpl<std_msgs::msg::String>;
 template class RosTopicImpl<hri_msgs::msg::Expression>;
 template class RosTopicImpl<hri_actions_msgs::msg::ClosedCaption>;
+template class RosTopicImpl<hri_msgs::msg::LiveSpeech>;
 template class RosTopicImpl<hri_actions_msgs::msg::Intent>;

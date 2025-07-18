@@ -23,13 +23,15 @@
 
 #include <hri_actions_msgs/msg/closed_caption.hpp>
 #include <hri_actions_msgs/msg/intent.hpp>
+#include <hri_msgs/msg/live_speech.hpp>
+#include <hri_msgs/msg/ids_list.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
 
 #define SHARED_CONSTANT(type, name, value) \
-  Q_PROPERTY(type name READ name CONSTANT) \
-  type name() const {return value;}
+        Q_PROPERTY(type name READ name CONSTANT) \
+        type name() const {return value;}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,6 +104,38 @@ protected:
 
 private:
   QString _speaker_id;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+class LiveSpeechTopic
+  : public RosTopicImpl<hri_msgs::msg::LiveSpeech>
+{
+  Q_OBJECT
+  Q_PROPERTY(QString speaker_name WRITE setSpeakerName MEMBER _speaker_name)
+  Q_PROPERTY(
+    QString incremental MEMBER _incremental NOTIFY onIncrementalChanged)
+  Q_PROPERTY(double confidence MEMBER _confidence)
+  Q_PROPERTY(QString locale MEMBER _locale)
+
+public:
+  void setSpeakerName(const QString &);
+
+  Q_INVOKABLE void publish();
+
+signals:
+  void onIncrementalChanged();
+
+protected:
+  void
+  onIncomingData(const hri_msgs::msg::LiveSpeech & data) override;
+
+private:
+  typename rclcpp::Publisher<hri_msgs::msg::IdsList>::SharedPtr _user_id_publisher;
+
+  QString _speaker_name;
+  QString _incremental;
+  double _confidence = 0.0;
+  QString _locale;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
