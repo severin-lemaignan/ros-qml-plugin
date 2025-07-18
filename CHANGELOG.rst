@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* expose the navigate_to_pose skill
+* Contributors: Séverin Lemaignan
+
 2.19.2 (2025-07-09)
 -------------------
 * linting
