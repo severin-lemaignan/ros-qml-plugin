@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.20.1 (2025-07-29)
+-------------------
 * service: setbool: ensure we notify when value changed
 * Contributors: Séverin Lemaignan
 
