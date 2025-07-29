@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* service: setbool: ensure we notify when value changed
+* Contributors: Séverin Lemaignan
+
 2.20.0 (2025-07-18)
 -------------------
 * expose the navigate_to_pose skill
