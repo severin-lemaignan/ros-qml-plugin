@@ -30,8 +30,8 @@
 #include "ros_qml_plugin/qobject_ros2.hpp"
 
 #define SHARED_CONSTANT(type, name, value) \
-        Q_PROPERTY(type name READ name CONSTANT) \
-        type name() const {return value;}
+  Q_PROPERTY(type name READ name CONSTANT) \
+  type name() const {return value;}
 
 
 ///////////////////////////////////////////////////////////////////////////////

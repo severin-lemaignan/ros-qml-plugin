@@ -135,6 +135,16 @@ Supported skills:
   }
   skill.say("Hello world")
   ```
+- `ChatSkill`: a skill that can be used to initiate a chat with a user.
+  
+  Example:
+  ```qml
+  SaySkill {
+      id: skill
+  }
+  skill.start("Hello! I'm a helpful robot") // the initial speech can be omitted
+  skill.stop() // to end the dialogue
+  ```
 - `SetExpression`: a skill that can be used to set an expression on the robot.
   
   Example:

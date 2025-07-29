@@ -44,6 +44,8 @@ set(SOURCES
     src/qml_look_at_skill.cpp
     include/ros_qml_plugin/qml_sayskill.hpp
     src/qml_sayskill.cpp
+    include/ros_qml_plugin/qml_chatskill.hpp
+    src/qml_chatskill.cpp
     include/ros_qml_plugin/qml_set_expression_skill.hpp
     src/qml_set_expression_skill.cpp
     include/ros_qml_plugin/qml_navigate_skill.hpp

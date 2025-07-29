@@ -89,7 +89,7 @@ void LiveSpeechTopic::onIncomingData(
   double confidence = data.confidence;
   QString locale = QString::fromStdString(data.locale);
 
-  setValue(value); // emits onValueChanged() if value changed
+  setValue(value);  // emits onValueChanged() if value changed
 
   if (incremental != _incremental) {
     _incremental = incremental;

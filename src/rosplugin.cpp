@@ -38,6 +38,7 @@
 #include <std_msgs/msg/string.hpp>
 
 #include "ros_qml_plugin/qml_sayskill.hpp"
+#include "ros_qml_plugin/qml_chatskill.hpp"
 #include "ros_qml_plugin/qml_set_expression_skill.hpp"
 #include "ros_qml_plugin/qml_look_at_skill.hpp"
 #include "ros_qml_plugin/qml_navigate_skill.hpp"
@@ -89,6 +90,7 @@ public:
     qmlRegisterType<SetLocaleAction>(uri, 2, 0, "SetLocaleAction");
 
     qmlRegisterType<SaySkill>(uri, 2, 0, "SaySkill");
+    qmlRegisterType<ChatSkill>(uri, 2, 0, "ChatSkill");
     qmlRegisterType<SetExpressionSkill>(uri, 2, 0, "SetExpressionSkill");
     qmlRegisterType<LookAtSkill>(uri, 2, 0, "LookAtSkill");
     qmlRegisterType<NavigateToPoseSkill>(uri, 2, 0, "NavigateToPoseSkill");
