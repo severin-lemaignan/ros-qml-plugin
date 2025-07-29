@@ -29,6 +29,7 @@
   <depend>interaction_skills</depend>
   <depend>navigation_skills</depend>
   <depend>geometry_msgs</depend>
+  <depend>backward_ros</depend>
 
   <build_depend>qtbase5-dev</build_depend>
   <build_depend>qtdeclarative5-dev</build_depend>
