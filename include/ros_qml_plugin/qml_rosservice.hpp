@@ -103,7 +103,10 @@ protected:
 class SetBoolService : public RosServiceImpl<std_srvs::srv::SetBool>
 {
   Q_OBJECT
-  Q_PROPERTY(bool value MEMBER _value)
+  Q_PROPERTY(bool value MEMBER _value NOTIFY valueChanged)
+
+signals:
+  void valueChanged();
 
 private:
   bool _value;

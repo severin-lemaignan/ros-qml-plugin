@@ -57,9 +57,13 @@ void SetBoolService::handle_request(
   const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
   std::shared_ptr<std_srvs::srv::SetBool::Response> response)
 {
-  _value = request->data;
-  response->success = true;
   emit requestReceived();
+  bool value = request->data;
+  if (value != _value) {
+    _value = value;
+    emit valueChanged();
+  }
+  response->success = true;
 }
 
 template class RosServiceImpl<std_srvs::srv::SetBool>;
