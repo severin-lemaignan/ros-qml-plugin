@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.0 (2025-07-30)
+-------------------
 * impl Chat skill
 * enable backward_ros to get stacktraces when plugin crashing
 * expose 'livespeech' topic to eg simulate someone speaking
