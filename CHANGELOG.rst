@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove un-needed dependency on ament_cmake_pal
+* Contributors: Séverin Lemaignan
+
 2.21.0 (2025-07-30)
 -------------------
 * impl Chat skill
