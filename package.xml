@@ -8,7 +8,6 @@
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
-  <buildtool_depend>ament_cmake_pal</buildtool_depend>
 
   <depend>hri_msgs</depend>
   <depend>hri_actions_msgs</depend>
