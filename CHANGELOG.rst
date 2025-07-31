@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.1 (2025-07-31)
+-------------------
 * remove un-needed dependency on ament_cmake_pal
 * Contributors: Séverin Lemaignan
 
