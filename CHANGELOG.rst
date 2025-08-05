@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.2 (2025-08-05)
+-------------------
 * chat skill: configure the prompt in th default role
 * Contributors: Séverin Lemaignan
 
