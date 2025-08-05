@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* chat skill: configure the prompt in th default role
+* Contributors: Séverin Lemaignan
+
 2.21.1 (2025-07-31)
 -------------------
 * remove un-needed dependency on ament_cmake_pal
