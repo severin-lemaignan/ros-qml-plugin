@@ -142,7 +142,7 @@ Supported skills:
   SaySkill {
       id: skill
   }
-  skill.start("Hello! I'm a helpful robot") // the initial speech can be omitted
+  skill.start("You are an helpful robot assistant", "Hello! How can I help?") // first the chatbot prompt, then the initial speech. Both can be omitted
   skill.stop() // to end the dialogue
   ```
 - `SetExpression`: a skill that can be used to set an expression on the robot.

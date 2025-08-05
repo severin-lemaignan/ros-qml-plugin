@@ -13,6 +13,8 @@
 // limitations under the License.
 
 
+#include <QJsonDocument>
+
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <communication_skills/action/chat.hpp>
 
@@ -20,7 +22,7 @@
 #include "ros_qml_plugin/ros2.hpp"
 
 
-void ChatSkill::start(QString initial_input)
+void ChatSkill::start(QString prompt, QString initial_input)
 {
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
@@ -42,6 +44,14 @@ void ChatSkill::start(QString initial_input)
   auto goal_msg = communication_skills::action::Chat::Goal();
   goal_msg.person_id = _person_id.toStdString();
   goal_msg.group_id = _group_id.toStdString();
+
+
+  goal_msg.role.name = "__default__";
+  goal_msg.role.configuration = QJsonDocument::fromVariant(
+    QVariantMap(
+  {
+    {"prompt",
+      prompt}})).toJson().toStdString();
 
   if (!initial_input.isEmpty()) {
     goal_msg.initiate = true;

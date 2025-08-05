@@ -34,7 +34,7 @@ class ChatSkill : public RosActionImpl<communication_skills::action::Chat>
   Q_PROPERTY(QString errorMsg MEMBER _error_msg)
 
 public:
-  Q_INVOKABLE void start(QString initial_input = "");
+  Q_INVOKABLE void start(QString prompt = "", QString initial_input = "");
   Q_INVOKABLE void stop();
 
 private:
