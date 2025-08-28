@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* linting
+* allow Ros.point and Ros.pose without explicit frame
+* Contributors: Séverin Lemaignan
+
 2.21.2 (2025-08-05)
 -------------------
 * chat skill: configure the prompt in th default role
