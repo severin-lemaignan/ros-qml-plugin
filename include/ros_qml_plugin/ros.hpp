@@ -35,9 +35,19 @@ public:
     return QVariant::fromValue(RosPoint(frame, x, y, z));
   }
 
+  Q_INVOKABLE QVariant point(double x, double y, double z)
+  {
+    return QVariant::fromValue(RosPoint(x, y, z));
+  }
+
   Q_INVOKABLE QVariant pose(const QString & frame, double x, double y, double z)
   {
     return QVariant::fromValue(RosPose(frame, x, y, z));
+  }
+
+  Q_INVOKABLE QVariant pose(double x, double y, double z)
+  {
+    return QVariant::fromValue(RosPose(x, y, z));
   }
 
   Q_INVOKABLE QVariant pose(
@@ -46,4 +56,11 @@ public:
   {
     return QVariant::fromValue(RosPose(frame, x, y, z, qx, qy, qz, qw));
   }
+
+  Q_INVOKABLE QVariant pose(
+    double x, double y, double z, double qx, double qy, double qz, double qw)
+  {
+    return QVariant::fromValue(RosPose(x, y, z, qx, qy, qz, qw));
+  }
+
 };

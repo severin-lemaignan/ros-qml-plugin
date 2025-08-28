@@ -32,6 +32,8 @@ public:
   RosPoint() {}
   RosPoint(const QString & f, double x, double y, double z)
   : _frame(f), _x(x), _y(y), _z(z) {}
+  RosPoint(double x, double y, double z)
+  : _frame(""), _x(x), _y(y), _z(z) {}
 
   QString _frame;
   double _x;
@@ -67,10 +69,15 @@ public:
   RosPose() {}
   RosPose(const QString & f, double x, double y, double z)
   : _frame(f), _x(x), _y(y), _z(z), _qx(0.0), _qy(0.0), _qz(0.0), _qw(1.0) {}
+  RosPose(double x, double y, double z)
+  : _frame(""), _x(x), _y(y), _z(z), _qx(0.0), _qy(0.0), _qz(0.0), _qw(1.0) {}
   RosPose(
     const QString & f, double x, double y, double z,
     double qx, double qy, double qz, double qw)
   : _frame(f), _x(x), _y(y), _z(z), _qx(qx), _qy(qy), _qz(qz), _qw(qw) {}
+  RosPose(
+    double x, double y, double z, double qx, double qy, double qz, double qw)
+  : _frame(""), _x(x), _y(y), _z(z), _qx(qx), _qy(qy), _qz(qz), _qw(qw) {}
 
   QString _frame;
   double _x;
