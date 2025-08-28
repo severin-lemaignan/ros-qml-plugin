@@ -62,5 +62,4 @@ public:
   {
     return QVariant::fromValue(RosPose(x, y, z, qx, qy, qz, qw));
   }
-
 };
