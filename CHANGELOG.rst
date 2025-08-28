@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.4 (2025-08-28)
+-------------------
 * skill: navigate_to_pose -> navigate
 * Contributors: Séverin Lemaignan
 
