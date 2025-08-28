@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.3 (2025-08-28)
+-------------------
 * linting
 * allow Ros.point and Ros.pose without explicit frame
 * Contributors: Séverin Lemaignan
