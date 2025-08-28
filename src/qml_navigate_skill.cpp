@@ -14,62 +14,62 @@
 
 
 #include <rclcpp_action/rclcpp_action.hpp>
-#include <navigation_skills/action/navigate_to_pose.hpp>
+#include <navigation_skills/action/navigate.hpp>
 
 #include "ros_qml_plugin/qml_navigate_skill.hpp"
 #include "ros_qml_plugin/ros2.hpp"
 #include "ros_qml_plugin/ros_types.hpp"
 
-void NavigateToPoseSkill::navigate_to_pose(const QVariant & pose, const QString & behavior_tree)
+void NavigateSkill::navigate(const QVariant & target)
 {
   std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
 
   if (!_client) {
     // if not connected yet, do it now
-    setAction("/skill/navigate_to_pose");
+    setAction("/skill/navigate");
   }
 
   // if still not connected, return
   if (!_client) {
-    std::cerr << "Unable to connect to the NavigateToPose skill." << std::endl;
+    std::cerr << "Unable to connect to the Navigate skill." << std::endl;
     return;
   }
 
   if (!_client->wait_for_action_server()) {
-    std::cerr << "NavigateToPose skill server not available" << std::endl;
+    std::cerr << "Navigate skill server not available" << std::endl;
   }
 
-  auto goal_msg = navigation_skills::action::NavigateToPose::Goal();
+  auto goal_msg = navigation_skills::action::Navigate::Goal();
 
-  if (pose.canConvert<RosPose>()) {
-    _pose = pose;
+  if (target.canConvert<RosPose>()) {
+    _pose = target;
     goal_msg.pose = _pose.value<RosPose>().toMsg();
+  } else if (target.canConvert<QString>()) {
+    _target = target.toString();
+    goal_msg.target = _target.toStdString();
   } else {
-    qWarning() << "Invalid pose type passed to navigate_to_pose";
+    qWarning() << "Invalid target type passed to navigate; expected RosPose or QString.";
     return;
   }
 
-  _behavior_tree = behavior_tree;
-  goal_msg.behavior_tree = _behavior_tree.toStdString();
-
   auto send_goal_options =
-    rclcpp_action::Client<navigation_skills::action::NavigateToPose>::SendGoalOptions();
+    rclcpp_action::Client<navigation_skills::action::Navigate>::SendGoalOptions();
 
   send_goal_options.goal_response_callback = std::bind(
-    &NavigateToPoseSkill::goal_response_callback, this, std::placeholders::_1);
+    &NavigateSkill::goal_response_callback, this, std::placeholders::_1);
 
   send_goal_options.feedback_callback = std::bind(
-    &NavigateToPoseSkill::feedback_callback, this,
+    &NavigateSkill::feedback_callback, this,
     std::placeholders::_1, std::placeholders::_2);
 
   send_goal_options.result_callback = std::bind(
-    &NavigateToPoseSkill::result_callback, this, std::placeholders::_1);
+    &NavigateSkill::result_callback, this, std::placeholders::_1);
 
   auto goal_handle_future = _client->async_send_goal(goal_msg, send_goal_options);
 }
 
-void NavigateToPoseSkill::goal_response_callback(
-  rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::SharedPtr goal_handle)
+void NavigateSkill::goal_response_callback(
+  rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::SharedPtr goal_handle)
 {
   if (!goal_handle) {
     std::cerr << "Goal was rejected by server" << std::endl;
@@ -78,16 +78,16 @@ void NavigateToPoseSkill::goal_response_callback(
   }
 }
 
-void NavigateToPoseSkill::feedback_callback(
-  rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::SharedPtr,
-  const std::shared_ptr<const navigation_skills::action::NavigateToPose::Feedback>)
+void NavigateSkill::feedback_callback(
+  rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::SharedPtr,
+  const std::shared_ptr<const navigation_skills::action::Navigate::Feedback>)
 {
   // TODO(SLE): expose feedback data
   emit feedbackReceived();
 }
 
-void NavigateToPoseSkill::result_callback(
-  const rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::WrappedResult &
+void NavigateSkill::result_callback(
+  const rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::WrappedResult &
   result)
 {
   switch (result.code) {
@@ -108,4 +108,4 @@ void NavigateToPoseSkill::result_callback(
   emit resultReceived();
 }
 
-template class RosActionImpl<navigation_skills::action::NavigateToPose>;
+template class RosActionImpl<navigation_skills::action::Navigate>;

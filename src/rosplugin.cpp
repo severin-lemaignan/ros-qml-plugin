@@ -93,7 +93,7 @@ public:
     qmlRegisterType<ChatSkill>(uri, 2, 0, "ChatSkill");
     qmlRegisterType<SetExpressionSkill>(uri, 2, 0, "SetExpressionSkill");
     qmlRegisterType<LookAtSkill>(uri, 2, 0, "LookAtSkill");
-    qmlRegisterType<NavigateToPoseSkill>(uri, 2, 0, "NavigateToPoseSkill");
+    qmlRegisterType<NavigateSkill>(uri, 2, 0, "NavigateSkill");
   }
 
   void initializeEngine(QQmlEngine * engine, const char * uri)

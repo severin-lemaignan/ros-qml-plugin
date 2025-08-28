@@ -169,16 +169,17 @@ Supported skills:
   skill.reset() // look straight ahead
   ```
 
-- `NavigateToPoseSkill`: a skill that makes mobile platform to move to a specific
+- `NavigateSkill`: a skill that makes mobile platform to move to a specific
   pose in the world.
   
   Example:
   ```qml
-  NavigateToPoseSkill {
+  NavigateSkill {
       id: skill
   }
-  skill.navigate_to_pose(Ros.pose("map", 1.0, 0.0, 0.0, 0.0, 0.0, 0.71, 0.71)) // x,y,z, qx, qy, qz, qw -> here a 90deg rotation around Z
-  skill.navigate_to_pose(Ros.pose("map", 1.0, 0.0, 0.0)) // using only the position
+  skill.navigate(Ros.pose("map", 1.0, 0.0, 0.0, 0.0, 0.0, 0.71, 0.71)) // x,y,z, qx, qy, qz, qw -> here a 90deg rotation around Z
+  skill.navigate(Ros.pose("map", 1.0, 0.0, 0.0)) // using only the position
+  skill.navigate(Ros.pose(1.0, 0.0, 0.0)) // relative to the robot itself
   ```
 
 ### Live speech
