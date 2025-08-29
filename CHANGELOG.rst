@@ -2,6 +2,13 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* partially revert 857f033af7 to still use the underlying navigate_to_pose skill
+  navigate_to_pose has been taught to deal with missing reference frames; for now we can use that.
+  Keep the QML 'navigate' name in the API to be future-proof (when the proper 'navigate' skill will be ready)
+* Contributors: Séverin Lemaignan
+
 2.21.4 (2025-08-28)
 -------------------
 * skill: navigate_to_pose -> navigate
