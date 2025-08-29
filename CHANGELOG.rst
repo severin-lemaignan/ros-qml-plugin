@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* avoid ROS segfault by returning early if ROS2 not ready
+* Contributors: Séverin Lemaignan
+
 2.21.5 (2025-08-29)
 -------------------
 * partially revert 857f033af7 to still use the underlying navigate_to_pose skill
