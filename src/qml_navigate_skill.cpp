@@ -14,7 +14,7 @@
 
 
 #include <rclcpp_action/rclcpp_action.hpp>
-#include <navigation_skills/action/navigate.hpp>
+#include <navigation_skills/action/navigate_to_pose.hpp>
 
 #include "ros_qml_plugin/qml_navigate_skill.hpp"
 #include "ros_qml_plugin/ros2.hpp"
@@ -26,34 +26,37 @@ void NavigateSkill::navigate(const QVariant & target)
 
   if (!_client) {
     // if not connected yet, do it now
-    setAction("/skill/navigate");
+    setAction("/skill/navigate_to_pose");
   }
 
   // if still not connected, return
   if (!_client) {
-    std::cerr << "Unable to connect to the Navigate skill." << std::endl;
+    std::cerr << "Unable to connect to the navigate_to_pose skill." << std::endl;
     return;
   }
 
   if (!_client->wait_for_action_server()) {
-    std::cerr << "Navigate skill server not available" << std::endl;
+    std::cerr << "navigate_to_pose skill server not available" << std::endl;
   }
 
-  auto goal_msg = navigation_skills::action::Navigate::Goal();
+  auto goal_msg = navigation_skills::action::NavigateToPose::Goal();
 
   if (target.canConvert<RosPose>()) {
     _pose = target;
     goal_msg.pose = _pose.value<RosPose>().toMsg();
-  } else if (target.canConvert<QString>()) {
-    _target = target.toString();
-    goal_msg.target = _target.toStdString();
+    // TODO(SLE): when the navigate skill is ready, 'target' property can be used to pass
+    // a named target
+//  } else if (target.canConvert<QString>()) {
+//    _target = target.toString();
+//    goal_msg.target = _target.toStdString();
   } else {
-    qWarning() << "Invalid target type passed to navigate; expected RosPose or QString.";
+    qWarning() << "Invalid target type passed to navigate; expected RosPose.";
+    // qWarning() << "Invalid target type passed to navigate; expected RosPose or QString.";
     return;
   }
 
   auto send_goal_options =
-    rclcpp_action::Client<navigation_skills::action::Navigate>::SendGoalOptions();
+    rclcpp_action::Client<navigation_skills::action::NavigateToPose>::SendGoalOptions();
 
   send_goal_options.goal_response_callback = std::bind(
     &NavigateSkill::goal_response_callback, this, std::placeholders::_1);
@@ -69,7 +72,7 @@ void NavigateSkill::navigate(const QVariant & target)
 }
 
 void NavigateSkill::goal_response_callback(
-  rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::SharedPtr goal_handle)
+  rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::SharedPtr goal_handle)
 {
   if (!goal_handle) {
     std::cerr << "Goal was rejected by server" << std::endl;
@@ -79,15 +82,15 @@ void NavigateSkill::goal_response_callback(
 }
 
 void NavigateSkill::feedback_callback(
-  rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::SharedPtr,
-  const std::shared_ptr<const navigation_skills::action::Navigate::Feedback>)
+  rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::SharedPtr,
+  const std::shared_ptr<const navigation_skills::action::NavigateToPose::Feedback>)
 {
   // TODO(SLE): expose feedback data
   emit feedbackReceived();
 }
 
 void NavigateSkill::result_callback(
-  const rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::WrappedResult &
+  const rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::WrappedResult &
   result)
 {
   switch (result.code) {
@@ -108,4 +111,4 @@ void NavigateSkill::result_callback(
   emit resultReceived();
 }
 
-template class RosActionImpl<navigation_skills::action::Navigate>;
+template class RosActionImpl<navigation_skills::action::NavigateToPose>;

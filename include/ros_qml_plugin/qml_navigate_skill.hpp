@@ -19,14 +19,14 @@
 #include <QQuickItem>
 #include <memory>
 
-#include <navigation_skills/action/navigate.hpp>
+#include <navigation_skills/action/navigate_to_pose.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 
 #include "ros_qml_plugin/qobject_ros2.hpp"
 #include "ros_qml_plugin/qml_rosaction.hpp"
 
-class NavigateSkill : public RosActionImpl<navigation_skills::action::Navigate>
+class NavigateSkill : public RosActionImpl<navigation_skills::action::NavigateToPose>
 {
   Q_OBJECT
   Q_PROPERTY(QVariant pose MEMBER _pose)
@@ -42,12 +42,12 @@ private:
   QString _error_msg;
 
   void goal_response_callback(
-    rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::SharedPtr);
+    rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::SharedPtr);
   void feedback_callback(
-    rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::SharedPtr,
-    const std::shared_ptr<const navigation_skills::action::Navigate::Feedback>);
+    rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::SharedPtr,
+    const std::shared_ptr<const navigation_skills::action::NavigateToPose::Feedback>);
   void result_callback(
-    const rclcpp_action::ClientGoalHandle<navigation_skills::action::Navigate>::
+    const rclcpp_action::ClientGoalHandle<navigation_skills::action::NavigateToPose>::
     WrappedResult &);
 };
 
