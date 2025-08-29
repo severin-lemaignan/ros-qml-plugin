@@ -34,10 +34,12 @@ void SetLocaleAction::sendGoal()
 
   if (!_client->wait_for_action_server()) {
     std::cerr << "Action server not available" << std::endl;
+    return;
   }
 
   if (!rclcpp::ok()) {
     std::cerr << "ROS2 is not ok" << std::endl;
+    return;
   }
 
   auto goal_msg = i18n_msgs::action::SetLocale::Goal();

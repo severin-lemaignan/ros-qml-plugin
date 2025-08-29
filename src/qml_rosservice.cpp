@@ -81,10 +81,12 @@ void GetLocalesService::callService()
 
   if (!_client->service_is_ready()) {
     std::cerr << "Service not available" << std::endl;
+    return;
   }
 
   if (!rclcpp::ok()) {
     std::cerr << "ROS2 is not ok" << std::endl;
+    return;
   }
 
   auto request = std::make_shared<i18n_msgs::srv::GetLocales::Request>();
