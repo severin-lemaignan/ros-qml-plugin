@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.6 (2025-08-29)
+-------------------
 * avoid ROS segfault by returning early if ROS2 not ready
 * Contributors: Séverin Lemaignan
 
