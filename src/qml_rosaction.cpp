@@ -37,11 +37,6 @@ void SetLocaleAction::sendGoal()
     return;
   }
 
-  if (!rclcpp::ok()) {
-    std::cerr << "ROS2 is not ok" << std::endl;
-    return;
-  }
-
   auto goal_msg = i18n_msgs::action::SetLocale::Goal();
   goal_msg.locale = _locale.toStdString();
 
