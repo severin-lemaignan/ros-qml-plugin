@@ -2,6 +2,12 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* remove unnecessary ros2::ok checks
+  Those checks actually randomly failed, for unknown reason
+* Contributors: Séverin Lemaignan
+
 2.21.6 (2025-08-29)
 -------------------
 * avoid ROS segfault by returning early if ROS2 not ready
