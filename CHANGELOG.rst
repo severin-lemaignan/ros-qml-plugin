@@ -2,8 +2,8 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+2.21.7 (2025-09-22)
+-------------------
 * remove unnecessary ros2::ok checks
   Those checks actually randomly failed, for unknown reason
 * Contributors: Séverin Lemaignan
