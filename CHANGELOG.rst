@@ -2,6 +2,11 @@
 Changelog for package ros_qml_plugin
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* add a KbSparqlService to execute SPARQL queries to a knowledge base
+* Contributors: Séverin Lemaignan
+
 2.21.7 (2025-09-22)
 -------------------
 * remove unnecessary ros2::ok checks
