@@ -23,6 +23,7 @@
   <depend>std_msgs</depend>
   <depend>std_srvs</depend>
   <depend>ui_msgs</depend>
+  <depend>kb_msgs</depend>
 
   <depend>communication_skills</depend>
   <depend>interaction_skills</depend>

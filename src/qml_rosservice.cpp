@@ -14,6 +14,7 @@
 
 #include <QQmlEngine>
 #include <QQmlContext>
+#include <QJsonDocument>
 #include <chrono>
 #include <i18n_msgs/srv/get_locales.hpp>
 
@@ -106,6 +107,61 @@ void GetLocalesService::handle_response(
 }
 
 template class RosServiceClientImpl<i18n_msgs::srv::GetLocales>;
+
+///////////////////////////////////////////////////////////////////////////////
+
+void KbSparqlService::executeQuery()
+{
+  std::shared_ptr<rclcpp::Node> node = Ros2Qml::getInstance().node();
+
+  if (!_client) {
+    std::cerr << "Service called without a client." << std::endl;
+    return;
+  }
+
+  if (!_client->service_is_ready()) {
+    std::cerr << "Service not available" << std::endl;
+    return;
+  }
+
+  if (_query.isEmpty()) {
+    std::cerr << "Query is empty" << std::endl;
+    return;
+  }
+
+  auto request = std::make_shared<kb_msgs::srv::Sparql::Request>();
+  request->query = _query.toStdString();
+
+  // clear previous value
+  _value = QVariant(QVariantMap());
+  emit valueChanged();
+
+  auto result_future =
+    _client->async_send_request(
+    request,
+    std::bind(&KbSparqlService::handle_response, this, std::placeholders::_1));
+}
+
+void KbSparqlService::handle_response(
+  rclcpp::Client<kb_msgs::srv::Sparql>::SharedFuture future)
+{
+  auto ok = future.get()->success;
+
+  if (ok) {
+    auto result = future.get()->json;
+    QJsonDocument doc = QJsonDocument::fromJson(QString::fromStdString(result).toUtf8());
+    _value = doc.toVariant();
+    emit valueChanged();
+  } else {
+    QString error_msg = QString::fromStdString(future.get()->error_msg);
+    emit errorOccurred(error_msg);
+  }
+
+  emit resultReceived();
+}
+
+template class RosServiceClientImpl<kb_msgs::srv::Sparql>;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -83,6 +83,8 @@ public:
 
     qmlRegisterType<SetBoolService>(uri, 2, 0, "SetBoolService");
 
+    qmlRegisterType<KbSparqlService>(uri, 2, 0, "KbSparqlService");
+
     qmlRegisterType<SetUiFragmentService>(uri, 2, 0, "SetUiFragmentService");
 
     qmlRegisterType<GetLocalesService>(uri, 2, 0, "GetLocalesService");

@@ -76,6 +76,7 @@ ament_target_dependencies(
   hri_actions_msgs
   ui_msgs
   i18n_msgs
+  kb_msgs
   std_srvs
   communication_skills
   interaction_skills

@@ -22,6 +22,7 @@
 
 #include <std_srvs/srv/set_bool.hpp>
 #include <i18n_msgs/srv/get_locales.hpp>
+#include <kb_msgs/srv/sparql.hpp>
 #include <ui_msgs/srv/set_ui_fragment.hpp>
 #include <rclcpp/rclcpp.hpp>
 
@@ -116,7 +117,6 @@ private:
     std::shared_ptr<std_srvs::srv::SetBool::Response> response) override;
 };
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 class GetLocalesService : public RosServiceClientImpl<i18n_msgs::srv::GetLocales>
@@ -130,6 +130,45 @@ public:
 private:
   QStringList _locales;
   void handle_response(rclcpp::Client<i18n_msgs::srv::GetLocales>::SharedFuture future);
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+class KbSparqlService : public RosServiceClientImpl<kb_msgs::srv::Sparql>
+{
+  Q_OBJECT
+  Q_PROPERTY(QString query WRITE setQuery READ getQuery NOTIFY queryChanged)
+  Q_PROPERTY(QVariant value READ getValue NOTIFY valueChanged)
+
+signals:
+  void queryChanged();
+  void valueChanged();
+  void errorOccurred(const QString & message);
+
+public:
+  void setQuery(const QString & query)
+  {
+    if (query != _query) {
+      _query = query;
+      emit queryChanged();
+    }
+  }
+  QString getQuery() const
+  {
+    return _query;
+  }
+  QVariant getValue() const
+  {
+    return _value;
+  }
+
+  Q_INVOKABLE void executeQuery();
+
+private:
+  QString _query = "";
+  QVariant _value = QVariant(QVariantMap());
+
+  void handle_response(rclcpp::Client<kb_msgs::srv::Sparql>::SharedFuture future);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
